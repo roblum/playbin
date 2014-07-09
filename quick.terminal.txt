@@ -1,0 +1,17 @@
+git remote add robsla https://github.com/stephenla/test.git
+git remote rm robsla
+git fetch robsla (alias)
+git merge robsla/edit-index
+
+git checkout -b branchname
+
+
+Terminal
+~ = home
+/ = root
+rm -rf = delete folder with files inside
+rmdir = remove empty folder
+
+rm -rf / = delete everything!!!!
+
+mv index.html index.php = move file or rename
