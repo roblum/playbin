@@ -12,10 +12,14 @@
     <link href="css/styles.css" rel="stylesheet">
   </head>
 
-  <body>
-    <div class="container">
-      
+  <body ng-app="myApp">
+    <div class="container" ng-controller="instagramController">
+      <div ng-repeat="p in pics">
+        <div><img src="{{p.images.low_resolution.url}}"/></div>
+      </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+    <script src="main.js"></script>
   </body>
 
 </html>
