@@ -2,20 +2,19 @@ var firebase = new Firebase("https://blistering-fire-6807.firebaseIO.com");
 
 firebase.child('NYU').child('counter').on('value', updateLeaderboard);
 
-firebase.on('value', function(ss){
+// firebase.on('value', function(ss){
+//      console.log(ss.val());
+// });
+
+firebase.on('child_changed', function(ss){
+     console.log('child changed:');
      console.log(ss.val());
+     console.log(ss.ref().name());
 });
 
-
-// for demo purposes
 function updateLeaderboard(ss) {
    $('#nyu').text(ss.val()||0);
 }
-
-// creates a new, incremental record
-// $('#inc').on('click', incId);
-// incId();
-
 
 function ranGenerator (){
      var schools = ['NYU', 'Columbia', 'Hunter'];
