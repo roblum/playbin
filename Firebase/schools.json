@@ -1,0 +1,17 @@
+{
+     "NYU" : {
+          "counter" : 0
+     },
+     "Columbia" : {
+          "counter" : 0
+     },
+     "Hunter" : {
+          "counter" : 0
+     },
+     "Baruch" : {
+          "counter" : 0
+     },
+     "Cooper-Union" : {
+          "counter" : 0
+     }
+}
