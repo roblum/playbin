@@ -1,30 +1,50 @@
 var firebase = new Firebase("https://blistering-fire-6807.firebaseIO.com");
 
-firebase.child('NYU').child('counter').on('value', updateLeaderboard);
+ranGenerator();
 
-// firebase.on('value', function(ss){
-//      console.log(ss.val());
-// });
+firebase.on('value', function(ss){
+     console.log('these are all the values');
+     console.log(ss.val());
+     var allData = ss.val();
+
+     for (data in allData){
+          var current = data
+          ,currentCounter = allData[data].counter;
+
+          console.log('for loop current');
+          console.log(currentCounter);
+
+          $('#' + data + ' span').text(currentCounter);
+     }
+});
 
 firebase.on('child_changed', function(ss){
      console.log('child changed:');
      console.log(ss.val());
      console.log(ss.ref().name());
+     var school = ss.ref().name();
+
+     updateLeaderboard(ss, school);
 });
 
-function updateLeaderboard(ss) {
-   $('#nyu').text(ss.val()||0);
-}
+     function ranGenerator (){ // This function simulates the choice of a user
+          var schools = ['Baruch', 'Columbia', 'Cooper-Union', 'Hunter', 'NYU'];
 
-function ranGenerator (){
-     var schools = ['NYU', 'Columbia', 'Hunter'];
+          var randomSchool = schools[Math.floor(Math.random()*schools.length)];
+          console.log(randomSchool);
 
-     var randomSchool = schools[Math.floor(Math.random()*schools.length)];
-     console.log(randomSchool);
-     incId(randomSchool);
-}
+          incId(randomSchool);
+     }
 
-ranGenerator();
+
+          function updateLeaderboard(ss, school) {
+               console.log('ss val')
+               console.log(ss.val());
+               console.log(school);
+
+               $('#' + school + ' span').text(ss.val().counter||0);
+          }
+
 
 // creates a new, incremental record
 function incId(school) {
@@ -33,7 +53,7 @@ function incId(school) {
         return (currentValue||0) + 1
     }, function(err, committed, ss) {
         if( err ) {
-           setError(err);
+           // setError(err);
         }
         else if( committed ) {
            // if counter update succeeds, then create record
