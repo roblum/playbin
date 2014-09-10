@@ -1,1 +1,45 @@
-var fb = new Firebase("https://blistering-fire-6807.firebaseio.com/#-JVrEkgpq0q7yq-X5UMa|e6499b817ccc5db946f0e3164a6e73c6");
+var firebase = new Firebase("https://blistering-fire-6807.firebaseIO.com");
+
+firebase.child('NYU').child('counter').on('value', updateLeaderboard);
+
+firebase.on('value', function(ss){
+     console.log(ss.val());
+});
+
+
+// for demo purposes
+function updateLeaderboard(ss) {
+   $('#nyu').text(ss.val()||0);
+}
+
+// creates a new, incremental record
+// $('#inc').on('click', incId);
+// incId();
+
+
+function ranGenerator (){
+     var schools = ['NYU', 'Columbia', 'Hunter'];
+
+     var randomSchool = schools[Math.floor(Math.random()*schools.length)];
+     console.log(randomSchool);
+     incId(randomSchool);
+}
+
+ranGenerator();
+
+// creates a new, incremental record
+function incId(school) {
+    // increment the counter
+    firebase.child(school).child('counter').transaction(function(currentValue) {
+        return (currentValue||0) + 1
+    }, function(err, committed, ss) {
+        if( err ) {
+           setError(err);
+        }
+        else if( committed ) {
+           // if counter update succeeds, then create record
+           // probably want a recourse for failures too
+           // addRecord(ss.val());
+        }
+    });
+}
