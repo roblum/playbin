@@ -1,0 +1,2 @@
+put /home/ubuntu/analytics/engine/custom_ftp/offerpop_photo_urls.csv /offerpop/client_uploads/offerpop_photo_urls.csv
+
