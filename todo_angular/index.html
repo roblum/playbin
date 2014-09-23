@@ -1,0 +1,28 @@
+<html ng-app="sampleApp">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.19/angular.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script>
+    <script src="app.js"></script>
+  </head>
+
+  <body ng-controller="SampleCtrl">
+    <ul>
+      <li ng-repeat="message in messages">
+        <!-- exit a message -->
+        <input ng-model="message.text" ng-change="messages.$save(message)" />
+
+        <!-- delete message -->
+        <button ng-click="messages.$remove(message)">X</button>
+
+      </li>
+    </ul>
+
+    <!-- push a new message into the array -->
+    <form ng-submit="addMessage(newMessageText)">
+      <input ng-model="newMessageText" />
+      <button type="submit">add message</button>
+    </form>
+    
+  </body>
+</html>
