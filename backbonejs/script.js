@@ -12,3 +12,5 @@ var TodoView = Backbone.View.extend({
 
 var todoView = new TodoView({model : todoItem});
 
+todoView.render();
+$('body').html(todoView.el);
