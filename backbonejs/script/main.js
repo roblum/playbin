@@ -1,4 +1,14 @@
-define(['jquery.min', 'underscore.min', 'backbone.min'], function( $, _, Backbone ){
+require.config({
+
+        paths: {
+            "jquery": "jquery.min",
+            "underscore": "underscore.min",
+            "backbone": "backbone.min"
+        }
+        
+    });
+
+require(['jquery', 'underscore', 'backbone'], function( $, _, Backbone ){
 
 		var TodoModel = Backbone.Model.extend({});
 		var todoItem = new TodoModel();
