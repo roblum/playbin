@@ -7,8 +7,8 @@
             var heat = false;
 
             mapOptions = {
-                zoom : zoom
-                ,center : new google.maps.LatLng(center.lat, center.lng)
+                zoom : zoom // Set zoom level of map
+                ,center : new google.maps.LatLng(center.lat, center.lng) // Set center of map
             }
 
         }
@@ -16,10 +16,10 @@
         var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
         var _ajax = function(){
-            var baseURL
-                , apiKey
-                , positive = []
-                , negative = [];
+            var baseURL // API Endpoint
+                , apiKey // API Key
+                , positive = [] // Positive Latitude Coordinates
+                , negative = []; // Negative Latitude Coordinates
 
             function jsonp(url, callback) {
                 var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
@@ -43,7 +43,7 @@
             return {
                 pos : positive
                 , neg : negative
-            };
+            }; // This data can go to heat map if its enabled. otherwise will be parsed for loading
 
         }
 
