@@ -15,7 +15,7 @@
 
         var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
-        var _ajax = (function(){
+        var _ajax = function(){
             var baseURL
                 , apiKey
                 , positive = []
@@ -45,8 +45,11 @@
                 , neg : negative
             };
 
+        }
 
-        })();
+        var _markerCreation = function(){
+
+        }
 
         return {
             configureMap : configureMap
