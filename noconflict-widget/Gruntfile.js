@@ -16,11 +16,7 @@ module.exports = function (grunt) {
               ,tasks: ['s3']
             }
             ,js : {
-              files: ['script/*.js']
-              ,tasks: ['uglify:dist', 's3']
-            }
-            ,css : {
-              files: ['styles/*.css']
+              files: ['*.js']
               ,tasks: ['s3']
             }
         }
