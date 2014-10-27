@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    OPPixelInfo = {
+    opopMapInfo = {
           campaign : 'CAMPAIGN_ID',
           zoom: '13',
           center : 'latest',
@@ -8,7 +8,7 @@
     };
 
     var e = document.createElement('script');
-    e.src = 'https://offerpop.com/gmaps-visualization.js';
+    e.src = 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/main.js';
     e.async = true;
     document.body.appendChild(e);
 </script>
