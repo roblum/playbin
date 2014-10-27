@@ -6,16 +6,17 @@ document.querySelector('head').appendChild(opopjQuery);
 
 
 var opopInit = function(){
-     jQuery.noConflict();
-     (function($){
+     var $opop = window.jQuery.noConflict(true);
+     $opop(function($){
           console.log($.fn.jquery);
-     })(jQuery);
+     });
 
      oldjQuery();
 }
 
 function oldjQuery(){
      console.log($.fn.jquery);
+     console.log(jQuery.fn.jquery);
 }
 
 opopjQuery.onload = opopInit
