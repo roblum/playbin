@@ -25,7 +25,7 @@ module.exports = function (grunt) {
             }
         }
 
-    ,aws: grunt.file.readJSON('../Offerpop/s3.json')
+    ,aws: grunt.file.readJSON('../../Offerpop/s3.json')
     ,s3: {
       options: {
       key: '<%= aws.key %>'
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
           src: 'index.html'
           ,dest: 'roblum/noconflict/index.html'
         },{
-          src: 'script/script.min.js'
+          src: 'main.js'
           ,dest: 'roblum/noconflict/main.js'
         }
       ]
