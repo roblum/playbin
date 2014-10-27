@@ -1,7 +1,8 @@
 (function(){
         var opopMaps = window.opopMaps || {}
             ,$opop // local offerpop jquery
-            ,jQueryVersion = '1.11.0'; // jquery version
+            ,jQueryVersion = '1.11.0' // jquery version
+            ,googleMap;
 
         opopMaps.prepareLibraries = {
             checkPage : function(){
@@ -34,60 +35,46 @@
                 console.log('hello');
                 // main();
             }
-        }
+        };
 
-        var mapOptions;
+        opopMaps.mapManager = {
+            init : function(campaign, zoom, center, optional){
+                var heat = false;
 
-        var configureMap = function(campaign, zoom, center, optional){
-            var heat = false;
-
-            mapOptions = {
-                zoom : zoom // Set zoom level of map
-                ,center : new google.maps.LatLng(center.lat, center.lng) // Set center of map
-            }
-
-        }
-
-        var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-
-        var _ajax = function(){
-            var baseURL // API Endpoint
+                    mapOptions = {
+                        zoom : zoom // Set zoom level of map
+                        ,center : new google.maps.LatLng(center.lat, center.lng) // Set center of map
+                    }
+            },
+            createMap : function(){
+                var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+            },
+            pullFeed : function(){
+                var baseURL // API Endpoint
                 , apiKey // API Key
                 , positive = [] // Positive Latitude Coordinates
                 , negative = []; // Negative Latitude Coordinates
 
-            function jsonp(url, callback) {
-                var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-                window[callbackName] = function(data) {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    callback(data);
-                };
+                function jsonp(url, callback) {
+                    var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                        window[callbackName] = function(data) {
+                            delete window[callbackName];
+                            document.body.removeChild(script);
+                            callback(data);
+                        };
 
-                var script = document.createElement('script');
-                script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
-                document.body.appendChild(script);
+                        var script = document.createElement('script');
+                        script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+                        document.body.appendChild(script);
+                }
+
+                jsonp('https://api.instagram.com/v1/users/276609664/media/recent/?client_id=df70d4f39d3649a9b724876a0f2de343', function(data) {
+                    console.log(data);
+                        // Send data to negative or positive arrays based on latitude
+
+                });
             }
 
-            jsonp('https://api.instagram.com/v1/users/276609664/media/recent/?client_id=df70d4f39d3649a9b724876a0f2de343', function(data) {
-                console.log(data);
-                    // Send data to negative or positive arrays based on latitude
-
-            });
-
-            return {
-                pos : positive
-                , neg : negative
-            }; // This data can go to heat map if its enabled. otherwise will be parsed for loading
-
-        }
-
-        var _markerCreation = function(){
-
-        }
-
-        return {
-            configureMap : configureMap
-        }
+        };
 
 })();
