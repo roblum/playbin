@@ -26,14 +26,19 @@
                     // The jQuery version on the window is the one we want to use
                     $opop = window.jQuery;
                     // Run map visualization
+
+                    return;
                 }
+
+                return;
             },
             handleLib : function(){
                 // Restore $ and window.jQuery to their previous values and store the
                 // new local jQuery called $opop
                 $opop = window.jQuery.noConflict(true);
                 console.log('hello');
-                // main();
+
+                return;
             }
         };
 
@@ -41,6 +46,9 @@
             init : function(campaign, zoom, center, optional){
                 var heat = false;
 
+                opopMaps.prepareLibraries.checkPage();
+
+                console.log('hello');
                     mapOptions = {
                         zoom : zoom // Set zoom level of map
                         ,center : new google.maps.LatLng(center.lat, center.lng) // Set center of map
