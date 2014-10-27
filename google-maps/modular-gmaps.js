@@ -1,5 +1,40 @@
 (function(){
-    var mapConfigurations = (function(){
+        var opopMaps = window.opopMaps || {}
+            ,$opop // local offerpop jquery
+            ,jQueryVersion = '1.11.0'; // jquery version
+
+        opopMaps.prepareLibraries = {
+            checkPage : function(){
+                if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
+                    var opop_jQuery = document.createElement('script');
+                        opop_jQuery.setAttribute('type','text/javascript');
+                        opop_jQuery.setAttribute('src',
+                            'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js');
+                    if (opop_jQuery.readyState) {
+                        opop_jQuery.onreadystatechange = function () { // For old versions of IE
+                            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+                                handleLib();
+                            }
+                        };
+                    } else { // Other browsers
+                      opop_jQuery.onload = handleLib;
+                    }
+
+                    (document.querySelector('head') || document.querySelector('body')).appendChild(opop_jQuery);
+                } else {
+                    // The jQuery version on the window is the one we want to use
+                    $opop = window.jQuery;
+                    // Run map visualization
+                }
+            },
+            handleLib : function(){
+                // Restore $ and window.jQuery to their previous values and store the
+                // new local jQuery called $opop
+                $opop = window.jQuery.noConflict(true);
+                console.log('hello');
+                // main();
+            }
+        }
 
         var mapOptions;
 
@@ -54,8 +89,5 @@
         return {
             configureMap : configureMap
         }
-
-    });
-
 
 })();
