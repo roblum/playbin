@@ -1,0 +1,1 @@
+console.log($.fn.jquery); // Log version of jquery
