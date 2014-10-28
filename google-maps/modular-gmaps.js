@@ -4,13 +4,13 @@
             ,jQueryVersion = '1.11.0' // jquery version
             ,googleMap
             ,vendorLibs = {
-                jQuery : {
+                'jQuery' : {
                     source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
                 }
-                ,gMaps : {
+                ,'google.maps' : {
                     source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization'
                 }
-                ,richMarker : {
+                ,'RichMarker' : {
                     source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js'
                 }
             }
@@ -21,20 +21,22 @@
         opopMaps.prepareLibraries = {
             checkJquery : function(vendor){
                 for (var i in vendor){
-                    var current = vendor[i];
-                        ,detector = (current === 'jQuery') ? handleJQLoad : handleLoad;
-
+                    var current = vendor[i]
+                        ,detector = (current === 'jQuery') ? opopMaps.prepareLibraries.handleJQLoad : opopMaps.prepareLibraries.handleLoad;
+                        console.log(current);
                         detector(current);
                 }
                 return;
             },
             handleJQLoad : function(vendor){
                 if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
-                    handleLoad(vendor);
+                    opopMaps.prepareLibraries.handleLoad(vendor, true);
                 } else {
                     $opop = window.jQuery; // Assign global jQuery to $opop
                     return;
                 }
+
+                return;
             },
             handleLoad : function(vendor, jQ){
                 vendorLibs[vendor].elem = document.createElement('script');
@@ -43,27 +45,21 @@
                 if (vendorLibs[vendor].elem.readyState) {
                     vendorLibs[vendor].elem.onreadystatechange = function () { // For old versions of IE
                         if (this.readyState == 'complete' || this.readyState == 'loaded') {
-                            if (jQ){
-                                $opop = window.jQuery.noConflict(true);
-                                return;
-                            }
-
                             return;
                         }
                     };
                 } else { // Other browsers
-                  vendorLibs[vendor].elem.onload = opopMaps.prepareLibraries.handleJquery;
+                    vendorLibs[vendor].elem.onload = function(){
+                        if (jQ){
+                            $opop = window.jQuery.noConflict(true);
+                            console.log($opop.fn.jquery);
+                        }
+
+                        return;
+                    }
                 }
 
                 (bodyHead).appendChild(vendorLibs[vendor].elem);
-            }
-            ,handleJquery : function(){
-                // Restore $ and window.jQuery to their previous values and store the
-                // new local jQuery called $opop
-                $opop = window.jQuery.noConflict(true);
-                console.log('hello');
-
-                return;
             }
         };
 
@@ -75,7 +71,7 @@
 
                 console.log('hello');
                     mapOptions = {
-                        zoom : zoom // Set zoom level of map
+                        zoom : opopMapInfo.zoom // Set zoom level of map
                         ,center : new google.maps.LatLng(center.lat, center.lng) // Set center of map
                     }
             },
