@@ -1,8 +1,11 @@
 <script type="text/javascript">
     opopMapInfo = {
           campaign : 'CAMPAIGN_ID',
-          zoom: '13',
-          center : 'latest',
+          zoom: 13,
+          center : {
+            lat : 40.7508095,
+            long : -73.9887535
+          },
           styles : 'styles go here'
 
     };
