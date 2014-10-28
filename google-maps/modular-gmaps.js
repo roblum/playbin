@@ -25,7 +25,7 @@ var opopMapVisualizations = (function(){
             },
             jqPreLoad : function(vendor){
                 if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
-                    opopMaps.prepLib.handleLoad(vendor, true);
+                    opopMaps.prepLib.handleLoad(vendor);
                 } else {
                     $opop = window.jQuery; // Assign global jQuery to $opop
                     return;
@@ -33,7 +33,7 @@ var opopMapVisualizations = (function(){
 
                 return;
             },
-            handleLoad : function(vendor, jQ){
+            handleLoad : function(vendor){
                 vendorLibs[vendor].elem = document.createElement('script');
                 vendorLibs[vendor].elem.src = vendorLibs[vendor].source;
 
@@ -118,6 +118,7 @@ var opopMapVisualizations = (function(){
 
         return {
             configureMap : opopMaps.mapManager.configureMap
+            // configureMap is returned to global scope so gmaps callback will fire
         }
 
 })();
