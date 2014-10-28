@@ -1,36 +1,31 @@
 var opopMapVisualizations = (function(){
-        var opopMaps = window.opopMaps || {}
-            ,$opop // local offerpop jquery
-            ,jQueryVersion = '1.11.0' // jquery version
-            ,googleMap
-            ,vendorLibs = {
-                'jQuery' : {
-                    source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
-                }
-                ,'google.maps' : {
-                    source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopMapVisualizations.configureMap'
-                }
-                ,'RichMarker' : {
-                    source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js'
-                }
-            }
-            ,bodyHead = document.querySelector('head') || document.querySelector('body')
+    var opopMaps = window.opopMaps || {}
+        ,googleMap
+        ,$opop // local offerpop jquery
+        ,bodyHead = document.querySelector('head') || document.querySelector('body')
+        ,jQueryVersion = '1.11.0'; // jquery version
 
+    var vendorLibs = {
+        'jQuery' : {
+            source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
+        }
+        ,'google.maps' : {
+            source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopMapVisualizations.configureMap'
+        }
+        ,'RichMarker' : {
+            source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js'
+        }
+    };
 
+        opopMaps.prepLib = {
+            parseLib : function(vendor){
+                var detector = (vendor === 'jQuery') ? opopMaps.prepLib.handleJQLoad : opopMaps.prepLib.handleLoad;
 
-        opopMaps.prepareLibraries = {
-            checkJquery : function(vendor){
-                // for (var i in vendor){
-                //     var current = vendor[i]
-                    var detector = (vendor === 'jQuery') ? opopMaps.prepareLibraries.handleJQLoad : opopMaps.prepareLibraries.handleLoad;
-                        console.log(vendor);
-                        detector(vendor);
-                // }
-                // return;
+                    detector(vendor);
             },
             handleJQLoad : function(vendor){
                 if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
-                    opopMaps.prepareLibraries.handleLoad(vendor, true);
+                    opopMaps.prepLib.handleLoad(vendor, true);
                 } else {
                     $opop = window.jQuery; // Assign global jQuery to $opop
                     return;
@@ -45,28 +40,32 @@ var opopMapVisualizations = (function(){
                 if (vendorLibs[vendor].elem.readyState) {
                     vendorLibs[vendor].elem.onreadystatechange = function () { // For old versions of IE
                         if (this.readyState == 'complete' || this.readyState == 'loaded') {
-                            return;
+                            if (vendor === 'jQuery' || vendor === 'RichMarker'){
+                                opopMaps.prepLib.loadSteps(vendor);
+                            }
                         }
                     };
                 } else { // Other browsers
                     if (vendor === 'jQuery' || vendor === 'RichMarker'){
                         vendorLibs[vendor].elem.onload = function(){
-                            if (vendor === 'jQuery'){
-                                $opop = window.jQuery.noConflict(true);
-                                console.log($opop.fn.jquery);
-
-                                opopMaps.prepareLibraries.checkJquery('google.maps');
-                                // return;
-                            } else if (vendor === 'RichMarker'){
-
-                                opopMaps.mapManager.configureMap();
-                            }
-
+                            opopMaps.prepLib.loadSteps(vendor);
                         }
                     }
                 }
 
                 (bodyHead).appendChild(vendorLibs[vendor].elem);
+            },
+            loadSteps : function(vendor){
+                if (vendor === 'jQuery'){
+                    $opop = window.jQuery.noConflict(true);
+                    console.log($opop.fn.jquery);
+
+                    opopMaps.prepLib.parseLib('google.maps');
+                } else if (vendor === 'RichMarker'){
+                    opopMaps.mapManager.pullFeed();
+                }
+
+                return;
             }
         };
 
@@ -74,7 +73,7 @@ var opopMapVisualizations = (function(){
             init : function(){
                 var heat = false;
 
-                opopMaps.prepareLibraries.checkJquery('jQuery');
+                opopMaps.prepLib.parseLib('jQuery');
 
             },
             configureMap : function(){
@@ -84,6 +83,7 @@ var opopMapVisualizations = (function(){
                 }
 
                 var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+                opopMaps.prepLib.parseLib('RichMarker');
 
             },
             pullFeed : function(){
