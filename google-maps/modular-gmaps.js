@@ -19,11 +19,11 @@ var opopMapVisualizations = (function(){
 
         opopMaps.prepLib = {
             parseLib : function(vendor){
-                var detector = (vendor === 'jQuery') ? opopMaps.prepLib.handleJQLoad : opopMaps.prepLib.handleLoad;
+                var detector = (vendor === 'jQuery') ? opopMaps.prepLib.jqPreLoad : opopMaps.prepLib.handleLoad;
 
                     detector(vendor);
             },
-            handleJQLoad : function(vendor){
+            jqPreLoad : function(vendor){
                 if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
                     opopMaps.prepLib.handleLoad(vendor, true);
                 } else {
@@ -37,16 +37,16 @@ var opopMapVisualizations = (function(){
                 vendorLibs[vendor].elem = document.createElement('script');
                 vendorLibs[vendor].elem.src = vendorLibs[vendor].source;
 
-                if (vendorLibs[vendor].elem.readyState) {
-                    vendorLibs[vendor].elem.onreadystatechange = function () { // For old versions of IE
+                if (vendorLibs[vendor].elem.readyState) { // For old versions of IE
+                    vendorLibs[vendor].elem.onreadystatechange = function () {
                         if (this.readyState == 'complete' || this.readyState == 'loaded') {
-                            if (vendor === 'jQuery' || vendor === 'RichMarker'){
+                            if (vendor != 'google.maps'){
                                 opopMaps.prepLib.loadSteps(vendor);
                             }
                         }
                     };
                 } else { // Other browsers
-                    if (vendor === 'jQuery' || vendor === 'RichMarker'){
+                    if (vendor != 'google.maps'){
                         vendorLibs[vendor].elem.onload = function(){
                             opopMaps.prepLib.loadSteps(vendor);
                         }
@@ -79,7 +79,7 @@ var opopMapVisualizations = (function(){
             configureMap : function(){
                 mapOptions = {
                     zoom : opopMapInfo.zoom // Set zoom level of map
-                    ,center : new google.maps.LatLng(40.7508095,-73.9887535) // Set center of map
+                    ,center : new google.maps.LatLng(opopMapInfo.center.lat, opopMapInfo.center.long) // Set center of map
                 }
 
                 var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
