@@ -4,43 +4,65 @@
             ,jQueryVersion = '1.11.0' // jquery version
             ,googleMap
             ,vendorLibs = {
-                jQuery : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
-                ,gMaps : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization'
-                ,richMarker : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js'
+                jQuery : {
+                    source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
+                }
+                ,gMaps : {
+                    source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization'
+                }
+                ,richMarker : {
+                    source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js'
+                }
             }
+            ,bodyHead = document.querySelector('head') || document.querySelector('body')
+
+
 
         opopMaps.prepareLibraries = {
-            checkJquery : function(){
-                if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
-                    var opop_jQuery = document.createElement('script');
-                        opop_jQuery.setAttribute('type','text/javascript');
-                        opop_jQuery.setAttribute('src', vendorLibs.jQuery);
-                    if (opop_jQuery.readyState) {
-                        opop_jQuery.onreadystatechange = function () { // For old versions of IE
-                            if (this.readyState == 'complete' || this.readyState == 'loaded') {
-                                opopMaps.prepareLibraries.handleJquery();
-                            }
-                        };
-                    } else { // Other browsers
-                      opop_jQuery.onload = opopMaps.prepareLibraries.handleJquery;
-                    }
+            checkJquery : function(vendor){
+                for (var i in vendor){
+                    var current = vendor[i];
+                        ,detector = (current === 'jQuery') ? handleJQLoad : handleLoad;
 
-                    (document.querySelector('head') || document.querySelector('body')).appendChild(opop_jQuery);
-                } else {
-                    // Assign global jQuery to $opop
-                    $opop = window.jQuery;
-
-                    return;
+                        detector(current);
                 }
-
                 return;
             },
-            handleJquery : function(){
+            handleJQLoad : function(vendor){
+                if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
+                    handleLoad(vendor);
+                } else {
+                    $opop = window.jQuery; // Assign global jQuery to $opop
+                    return;
+                }
+            },
+            handleLoad : function(vendor, jQ){
+                vendorLibs[vendor].elem = document.createElement('script');
+                vendorLibs[vendor].elem.src = vendorLibs[vendor].source;
+
+                if (vendorLibs[vendor].elem.readyState) {
+                    vendorLibs[vendor].elem.onreadystatechange = function () { // For old versions of IE
+                        if (this.readyState == 'complete' || this.readyState == 'loaded') {
+                            if (jQ){
+                                $opop = window.jQuery.noConflict(true);
+                                return;
+                            }
+
+                            return;
+                        }
+                    };
+                } else { // Other browsers
+                  vendorLibs[vendor].elem.onload = opopMaps.prepareLibraries.handleJquery;
+                }
+
+                (bodyHead).appendChild(vendorLibs[vendor].elem);
+            }
+            ,handleJquery : function(){
                 // Restore $ and window.jQuery to their previous values and store the
                 // new local jQuery called $opop
                 $opop = window.jQuery.noConflict(true);
                 console.log('hello');
-                opopMaps.prepareLibraries.handleMapLib('RichMarker');
+
                 return;
             }
         };
@@ -49,7 +71,7 @@
             init : function(){
                 var heat = false;
 
-                opopMaps.prepareLibraries.checkJquery();
+                opopMaps.prepareLibraries.checkJquery(['jQuery', 'google.maps', 'RichMarker']);
 
                 console.log('hello');
                     mapOptions = {
