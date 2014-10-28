@@ -1,3 +1,11 @@
+ function initialize(){
+                mapOptions = {
+                    zoom : opopMapInfo.zoom // Set zoom level of map
+                    ,center : new google.maps.LatLng(40.7508095,-73.9887535) // Set center of map
+                }
+                var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+            }
+
 (function(){
         var opopMaps = window.opopMaps || {}
             ,$opop // local offerpop jquery
@@ -8,7 +16,8 @@
                     source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
                 }
                 ,'google.maps' : {
-                    source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization'
+                    source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=initialize'
+                    //source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/map-visualization.js'
                 }
                 ,'RichMarker' : {
                     source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js'
@@ -20,13 +29,13 @@
 
         opopMaps.prepareLibraries = {
             checkJquery : function(vendor){
-                for (var i in vendor){
-                    var current = vendor[i]
-                        ,detector = (current === 'jQuery') ? opopMaps.prepareLibraries.handleJQLoad : opopMaps.prepareLibraries.handleLoad;
-                        console.log(current);
-                        detector(current);
-                }
-                return;
+                // for (var i in vendor){
+                //     var current = vendor[i]
+                    var detector = (vendor === 'jQuery') ? opopMaps.prepareLibraries.handleJQLoad : opopMaps.prepareLibraries.handleLoad;
+                        console.log(vendor);
+                        detector(vendor);
+                // }
+                // return;
             },
             handleJQLoad : function(vendor){
                 if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
@@ -49,13 +58,20 @@
                         }
                     };
                 } else { // Other browsers
-                    vendorLibs[vendor].elem.onload = function(){
-                        if (jQ){
-                            $opop = window.jQuery.noConflict(true);
-                            console.log($opop.fn.jquery);
-                        }
+                    if (vendor === 'jQuery' || vendor === 'RichMarker'){
+                        vendorLibs[vendor].elem.onload = function(){
+                            if (vendor === 'jQuery'){
+                                $opop = window.jQuery.noConflict(true);
+                                console.log($opop.fn.jquery);
 
-                        return;
+                                opopMaps.prepareLibraries.checkJquery('google.maps');
+                                // return;
+                            } else if (vendor === 'RichMarker'){
+
+                                opopMaps.mapManager.configureMap();
+                            }
+
+                        }
                     }
                 }
 
@@ -67,16 +83,19 @@
             init : function(){
                 var heat = false;
 
-                opopMaps.prepareLibraries.checkJquery(['jQuery', 'google.maps', 'RichMarker']);
+                opopMaps.prepareLibraries.checkJquery('jQuery');
 
-                console.log('hello');
-                    mapOptions = {
-                        zoom : opopMapInfo.zoom // Set zoom level of map
-                        ,center : new google.maps.LatLng(center.lat, center.lng) // Set center of map
-                    }
+            },
+            configureMap : function(){
+                mapOptions = {
+                    zoom : opopMapInfo.zoom // Set zoom level of map
+                    ,center : new google.maps.LatLng(40.7508095,-73.9887535) // Set center of map
+                }
+                opopMaps.mapManager.createMap()
             },
             createMap : function(){
                 var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+                console.log(googleMap);
             },
             pullFeed : function(){
                 var baseURL // API Endpoint
