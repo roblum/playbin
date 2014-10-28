@@ -1,12 +1,4 @@
- function initialize(){
-                mapOptions = {
-                    zoom : opopMapInfo.zoom // Set zoom level of map
-                    ,center : new google.maps.LatLng(40.7508095,-73.9887535) // Set center of map
-                }
-                var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-            }
-
-(function(){
+var opopMapVisualizations = (function(){
         var opopMaps = window.opopMaps || {}
             ,$opop // local offerpop jquery
             ,jQueryVersion = '1.11.0' // jquery version
@@ -16,8 +8,7 @@
                     source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
                 }
                 ,'google.maps' : {
-                    source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=initialize'
-                    //source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/map-visualization.js'
+                    source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopMapVisualizations.configureMap'
                 }
                 ,'RichMarker' : {
                     source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js'
@@ -91,11 +82,9 @@
                     zoom : opopMapInfo.zoom // Set zoom level of map
                     ,center : new google.maps.LatLng(40.7508095,-73.9887535) // Set center of map
                 }
-                opopMaps.mapManager.createMap()
-            },
-            createMap : function(){
+
                 var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-                console.log(googleMap);
+
             },
             pullFeed : function(){
                 var baseURL // API Endpoint
@@ -126,5 +115,9 @@
         };
 
         opopMaps.mapManager.init(opopMapInfo);
+
+        return {
+            configureMap : opopMaps.mapManager.configureMap
+        }
 
 })();
