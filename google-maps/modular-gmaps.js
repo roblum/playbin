@@ -1,6 +1,7 @@
 var opopMapVisualizations = (function(){
     var opopMaps = window.opopMaps || {}
         ,googleMap
+        ,heatData
         ,$opop // local offerpop jquery
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
         ,jQueryVersion = '1.11.0'; // jquery version
@@ -112,6 +113,42 @@ var opopMapVisualizations = (function(){
                 });
             }
 
+        };
+
+        opopMaps.Addons = {
+            /*
+             * Map Add-ons. These features will be optional.
+             * Heatmap will be a configuration option.
+             * If marked as true, the below functions will run.
+             * As we pull UGC from Content API, we will store coords into heatData []
+             *
+             * Possible add-ons: Customize heat colors/radius
+             */
+            heatMap : function(){
+              var pointArray = new google.maps.MVCArray(heatData);
+
+              heatmap = new google.maps.visualization.HeatmapLayer({
+                data: pointArray
+              });
+
+              heatmap.set('radius', 20);
+
+              opopMaps.Addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
+            },
+            toggleHeat : function(){
+                google.maps.event.addListener(googleMap, 'zoom_changed', function() {
+                    var current = googleMap.getZoom();
+
+                    if (current < mapOptions.zoom){
+                        $('.ugc-content').hide();
+                        heatmap.setMap(googleMap);
+                    } else {
+                        $('.ugc-content').show();
+                        heatmap.setMap(null);
+                    }
+
+                }); // Returns zoom level of map when changed
+            }
         };
 
         opopMaps.mapManager.init(opopMapInfo);
