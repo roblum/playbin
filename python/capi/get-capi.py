@@ -1,31 +1,59 @@
 from urllib2 import Request, urlopen
 import json
 
+page = 1
+
 def pullFeed(page):
-    baseURL = 'https://api.offerpop.com/v1/ugc/collections/'
-    campaignId = 6900
-    access_token = '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV'
-    next = False
+    baseURL         = 'https://api.offerpop.com/v1/ugc/collections/'
+    access_token    = '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV'
+    campaignId      = 6900
+    next            = False
 
     compiledRequest = baseURL + str(campaignId) + '/?access_token=' + access_token + '&page=' + str(page) + '&page_size=100&social_platform=twitter%2Cinstagram%2Cvinetweet&order=random_sort&seed=7&approval_status=app&media_type=video%2Cimage'
 
-    req = Request(compiledRequest)
-    res_body = json.loads(urlopen(req).read().decode("utf-8"))
+    req             = Request(compiledRequest)
+    res_body        = json.loads(urlopen(req).read().decode("utf-8"))
+    filtered        = res_body['_embedded']['ugc:item']
     
-    print res_body['_embedded']['ugc:item']
+    # print res_body['_embedded']['ugc:item']
+    storeUGC(filtered)
     # writeFile(res_body)
 
-def storeUGC():
+    if res_body['_links']['next']['href']:
+        page += 1
+        pullFeed(counter)
 
+def storeUGC(data):
+    for i in range(len(data)):
+        content = data[i]['content']
+        platform_data  = content['platform_data']
+
+        if platform_data and content['media'] and platform_data['geo_data'] and platform_data['geo_data']['coordinates']:
+            print 'hello'
+              #   geo_data  = platform_data.geo_data
+              #   images   = content.media.media_urls
+              #   network  = content.social_platform;
+              
+              #   newUGC = {
+              #       author          : content.author.username
+              #       ,avatar         : content.author.profile.avatar
+              #       ,caption        : content.text
+              #       ,latitude       : geo_data.coordinates.latitude
+              #       ,longitude      : geo_data.coordinates.longitude
+              #       ,large_image    : images.large_image
+              #       ,network        : network
+              #       ,timestamp      : new Date(content.created_on).toDateString()
+              #       ,platform_link  : platform_data.social_platform_original_url
+
+              # if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
+
+              # ugcStorage['item' + ugcCounter] = newUGC;
 
 def writeFile(res):
     with open('capi/response.json', 'w') as outfile:
         outfile.write(res)
 
-pullFeed(1)
-
-
-
+pullFeed(page)
 
 
     # opopMaps.mapManager.storeUGC(data['_embedded']['ugc:item']);
@@ -95,4 +123,3 @@ pullFeed(1)
     #                       ugcCounter++;
     #           }
     #       }   
-awq
