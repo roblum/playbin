@@ -2,6 +2,7 @@ from urllib2 import Request, urlopen
 import json
 
 page = 1
+ugcStorage = []
 
 def pullFeed(page):
     baseURL         = 'https://api.offerpop.com/v1/ugc/collections/'
@@ -16,14 +17,14 @@ def pullFeed(page):
     res_body        = json.loads(urlopen(req).read().decode("utf-8"))
     filtered        = res_body['_embedded']['ugc:item']
     
-    # print res_body['_embedded']['ugc:item']
     storeUGC(filtered)
-    # writeFile(res_body)
 
     if res_body['_links']['next']['href'] is not None:
         page += 1
         print 'there is another page' + str(page)
         pullFeed(page)
+    else:
+        writeFile()
 
 def storeUGC(data):
     for i in range(len(data)):
@@ -32,9 +33,11 @@ def storeUGC(data):
 
         if platform_data and content['media'] and platform_data['geo_data'] and platform_data['geo_data']['coordinates']:
             print 'hello'
+            ugcStorage.append(data[i])
 
-def writeFile(res):
+def writeFile():
+    cleaned = json.dumps(ugcStorage, ensure_ascii=False)
     with open('capi/response.json', 'w') as outfile:
-        outfile.write(res)
+        outfile.write(cleaned)
 
 pullFeed(page)
