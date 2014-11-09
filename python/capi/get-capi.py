@@ -19,9 +19,10 @@ def pullFeed(page):
     storeUGC(filtered)
     # writeFile(res_body)
 
-    if res_body['_links']['next']['href']:
+    if '_links' in res_body:
         page += 1
-        pullFeed(counter)
+        print 'there is another page' + str(page)
+        pullFeed(page)
 
 def storeUGC(data):
     for i in range(len(data)):
