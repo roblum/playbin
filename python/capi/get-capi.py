@@ -16,7 +16,7 @@ def pullFeed(page):
     req             = Request(compiledRequest)
     res_body        = json.loads(urlopen(req).read().decode("utf-8"))
     filtered        = res_body['_embedded']['ugc:item']
-    
+
     storeUGC(filtered)
 
     if res_body['_links']['next']['href'] is not None:
@@ -37,7 +37,7 @@ def storeUGC(data):
 
 def writeFile():
     cleaned = json.dumps(ugcStorage, ensure_ascii=False)
-    with open('capi/response.json', 'w') as outfile:
+    with open('response.json', 'w') as outfile:
         outfile.write(cleaned)
 
 pullFeed(page)
