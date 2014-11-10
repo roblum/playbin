@@ -1,8 +1,20 @@
 from urllib2 import Request, urlopen
+from boto.s3.connection import S3Connection
 import json
+import sysconfig
+import os
 
 page = 1
 ugcStorage = []
+
+access_key = os.environ['AWS_ACCESS_KEY_ID']
+secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
+bucket = os.environ['S3_BUCKET_NAME']
+
+s3_conn = S3Connection(access_key, secret_key)
+upload_bucket_name = bucket
+
+upload_bucket = s3_conn.get_bucket(upload_bucket_name)
 
 def pullFeed(page):
     baseURL         = 'https://api.offerpop.com/v1/ugc/collections/'
@@ -37,7 +49,12 @@ def storeUGC(data):
 
 def writeFile():
     cleaned = json.dumps(ugcStorage, ensure_ascii=False)
-    with open('response.json', 'w') as outfile:
-        outfile.write(cleaned)
+    upload_s3('/roblum/response.json', cleaned, {'Content-Type' : 'application/json'})
+
+def upload_s3(filename, data, headers):
+     s3_file = upload_bucket.new_key(filename)
+     s3_file.set_contents_from_string(data, headers)
+     s3_file.set_acl('public-read')
 
 pullFeed(page)
+
