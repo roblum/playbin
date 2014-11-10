@@ -125,15 +125,26 @@ var opopMapVisualizations = (function(){
              * Possible add-ons: Customize heat colors/radius
              */
             heatMap : function(){
-              var pointArray = new google.maps.MVCArray(heatData);
+                var pointArray = new google.maps.MVCArray(heatData);
+                    ,gradient = [
+                        'rgba(0, 255, 255, 0)',
+                        'rgba(0, 255, 255, 1)',
+                        'rgba(0, 63, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 127, 1)',
+                        'rgba(63, 0, 91, 1)',
+                        'rgba(191, 0, 31, 1)',
+                        'rgba(255, 0, 0, 1)'
+                    ] // Add 'defaultGradient'; gradient || defaultGradient;
 
-              heatmap = new google.maps.visualization.HeatmapLayer({
-                data: pointArray
-              });
+                heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: pointArray
+                });
 
-              heatmap.set('radius', 20);
+                heatmap.set('radius', 20);
+                heatmap.set('gradient', (mapOptions.gradient || gradient));
 
-              opopMaps.Addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
+                opopMaps.Addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
             },
             toggleHeat : function(){
                 google.maps.event.addListener(googleMap, 'zoom_changed', function() {
