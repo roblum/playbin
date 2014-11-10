@@ -44,7 +44,6 @@ def storeUGC(data):
         platform_data  = content['platform_data']
 
         if platform_data and content['media'] and platform_data['geo_data'] and platform_data['geo_data']['coordinates']:
-            print 'hello'
             ugcStorage.append(data[i])
 
 def writeFile():
