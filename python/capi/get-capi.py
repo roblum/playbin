@@ -20,7 +20,7 @@ def pullFeed(page):
     baseURL         = 'https://api.offerpop.com/v1/ugc/collections/'
     access_token    = '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV'
     campaignId      = 6900
-    page_size       = 10
+    page_size       = 100
     next            = False
 
     compiledRequest = baseURL + str(campaignId) + '/?access_token=' + access_token + '&page=' + str(page) + '&page_size=' + str(page_size) + '&social_platform=twitter%2Cinstagram%2Cvinetweet&order=random_sort&seed=7&approval_status=app&media_type=video%2Cimage'
