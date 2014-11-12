@@ -22,7 +22,7 @@ var opopMapVisualizations = (function(){
 
     var vendorLibs = {
         'jQuery' : {
-            version : '1.11.0' // jquery version
+            version : jqueryVersion // jquery version
             ,source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jqueryVersion + '/jquery.min.js'
         }
         ,'google.maps' : {
@@ -55,7 +55,7 @@ var opopMapVisualizations = (function(){
             },
             jqPreLoad : function(vendor){
                 var vendorVersion = vendorLibs[vendor].version
-                var versionDetection = (vendor === 'jQuery') ? window.jQuery.fn.jquery !== vendorVersion : window._.VERSION !== vendorVersion;
+                var versionDetection = (vendor === 'jQuery') ? window.jQuery.fn.jquery !== vendorVersion : window._.VERSION !== vendorVersion; // _.VERSION is undefined if doesnt exist... Need to refactor
 
                 if (window[vendor] === undefined || versionDetection) {
                     opopMaps.prepLib.handleLoad(vendor);
@@ -89,14 +89,20 @@ var opopMapVisualizations = (function(){
                 (bodyHead).appendChild(vendorLibs[vendor].elem);
             },
             loadSteps : function(vendor){
-                if (vendor === 'jQuery'){
-                    $opop = window.jQuery.noConflict(true);
-                    console.log($opop.fn.jquery);
-                } else if (vendor === 'RichMarker'){
-                    opopMaps.mapManager.pullFeed();
-                } else if (vendor === '_'){
-                    _opop = _.noConflict();
-                    console.log(_opop.VERSION);
+                switch(vendor){
+                    case '_':
+                        _opop = _.noConflict();
+                        console.log('_.noconf:', _opop.VERSION);
+                    break;
+
+                    case 'jQuery':
+                        $opop = window.jQuery.noConflict(true);
+                        console.log($opop.fn.jquery);
+                    break;
+
+                    case 'RichMarker':
+                        opopMaps.mapManager.pullFeed();
+                    break;
                 }
 
                 return;
