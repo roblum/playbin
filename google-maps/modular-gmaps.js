@@ -80,7 +80,7 @@ var opopMapVisualizations = (function(){
 
             },
             configureMap : function(){
-                mapOptions = {
+                var mapOptions = {
                     zoom : opopMapInfo.zoom // Set zoom level of map
                     ,center : new google.maps.LatLng(opopMapInfo.center.lat, opopMapInfo.center.long) // Set center of map
                 }
@@ -187,23 +187,14 @@ var opopMapVisualizations = (function(){
              */
             heatMap : function(){
                 var pointArray = new google.maps.MVCArray(heatData);
-                    ,gradient = [
-                        'rgba(0, 255, 255, 0)',
-                        'rgba(0, 255, 255, 1)',
-                        'rgba(0, 63, 255, 1)',
-                        'rgba(0, 0, 255, 1)',
-                        'rgba(0, 0, 127, 1)',
-                        'rgba(63, 0, 91, 1)',
-                        'rgba(191, 0, 31, 1)',
-                        'rgba(255, 0, 0, 1)'
-                    ] // Add 'defaultGradient'; gradient || defaultGradient;
+                    , // Add 'defaultGradient'; gradient || defaultGradient;
 
                 heatmap = new google.maps.visualization.HeatmapLayer({
                     data: pointArray
                 });
 
-                heatmap.set('radius', 20);
-                heatmap.set('gradient', (mapOptions.gradient || gradient));
+                heatmap.set('radius', (opopMapInfo.radius || opopMaps.defaults.map.radius);
+                heatmap.set('gradient', (opopMapInfo.gradient || opopMaps.defaults.map.gradient));
 
                 opopMaps.addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
             },
@@ -211,7 +202,7 @@ var opopMapVisualizations = (function(){
                 google.maps.event.addListener(googleMap, 'zoom_changed', function() {
                     var current = googleMap.getZoom();
 
-                    if (current < mapOptions.zoom){
+                    if (current < opopMapInfo.zoom){
                         $('.ugc-content').hide();
                         heatmap.setMap(googleMap);
                     } else {
@@ -224,7 +215,19 @@ var opopMapVisualizations = (function(){
         };
 
         opopMaps.defaults = {
-
+            map : {
+                gradient : [
+                        'rgba(0, 255, 255, 0)',
+                        'rgba(0, 255, 255, 1)',
+                        'rgba(0, 63, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 127, 1)',
+                        'rgba(63, 0, 91, 1)',
+                        'rgba(191, 0, 31, 1)',
+                        'rgba(255, 0, 0, 1)'
+                    ]
+                ,radius : 20
+            }
         }
 
         opopMaps.mapManager.init(opopMapInfo);
