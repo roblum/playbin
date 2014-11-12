@@ -20,7 +20,7 @@ var opopMapVisualizations = (function(){
             source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopMapVisualizations.configureMap'
         }
         ,'RichMarker' : {
-            source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js'
+            source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/rich-marker.js'
         }
     };
 
