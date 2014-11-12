@@ -10,8 +10,6 @@
 
 var opopMapVisualizations = (function(){
     var opopMaps = window.opopMaps || {}
-        ,googleMap
-        ,heatData
         ,$opop // local offerpop jquery
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
         ,jQueryVersion = '1.11.0'; // jquery version
