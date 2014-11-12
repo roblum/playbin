@@ -48,7 +48,8 @@ var opopMapVisualizations = (function(){
              */
 
             parseLib : function(vendor){
-                var detector = (vendor === 'jQuery' || vendor === '_') ? opopMaps.prepLib.jqPreLoad : opopMaps.prepLib.handleLoad;
+                var prepLib = opopMaps.prepLib
+                    ,detector = (vendor === 'jQuery' || vendor === '_') ? prepLib.jqPreLoad : prepLib.handleLoad;
 
                     detector(vendor);
             },
@@ -91,8 +92,6 @@ var opopMapVisualizations = (function(){
                 if (vendor === 'jQuery'){
                     $opop = window.jQuery.noConflict(true);
                     console.log($opop.fn.jquery);
-
-                    opopMaps.prepLib.parseLib('google.maps');
                 } else if (vendor === 'RichMarker'){
                     opopMaps.mapManager.pullFeed();
                 } else if (vendor === '_'){
@@ -108,6 +107,7 @@ var opopMapVisualizations = (function(){
             init : function(){
                 opopMaps.prepLib.parseLib('_');
                 opopMaps.prepLib.parseLib('jQuery');
+                opopMaps.prepLib.parseLib('google.maps');
             },
             configureMap : function(){
                 var mapOptions = {
