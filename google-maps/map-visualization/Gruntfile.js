@@ -6,7 +6,7 @@ module.exports = function (grunt) {
               ,tasks: ['s3']
             }
             ,js : {
-              files: ['*.js']
+              files: ['js/*.js']
               ,tasks: ['s3']
             }
         }
@@ -30,7 +30,7 @@ module.exports = function (grunt) {
           src: 'index.html'
           ,dest: 'roblum/noconflict/index.html'
         },{
-          src: 'modular-gmaps.js'
+          src: 'js/modular-gmaps.js'
           ,dest: 'roblum/noconflict/modular-gmaps.js'
         }
       ]
