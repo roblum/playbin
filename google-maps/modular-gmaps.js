@@ -7,6 +7,10 @@ var opopMapVisualizations = (function(){
         ,jQueryVersion = '1.11.0'; // jquery version
 
     var ugcStorage = {}
+        ,heatmap
+        ,heatData = []
+        ,googleMap
+        ,ugcCounter = 1
 
     var vendorLibs = {
         'jQuery' : {
@@ -85,7 +89,7 @@ var opopMapVisualizations = (function(){
                     ,center : new google.maps.LatLng(opopMapInfo.center.lat, opopMapInfo.center.long) // Set center of map
                 }
 
-                var googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+                googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
                 opopMaps.prepLib.parseLib('RichMarker');
 
             },
@@ -187,13 +191,12 @@ var opopMapVisualizations = (function(){
              */
             heatMap : function(){
                 var pointArray = new google.maps.MVCArray(heatData);
-                    , // Add 'defaultGradient'; gradient || defaultGradient;
 
                 heatmap = new google.maps.visualization.HeatmapLayer({
                     data: pointArray
                 });
 
-                heatmap.set('radius', (opopMapInfo.radius || opopMaps.defaults.map.radius);
+                heatmap.set('radius', (opopMapInfo.radius || opopMaps.defaults.map.radius));
                 heatmap.set('gradient', (opopMapInfo.gradient || opopMaps.defaults.map.gradient));
 
                 opopMaps.addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
