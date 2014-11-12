@@ -14,12 +14,11 @@ var opopMapVisualizations = (function(){
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
         ,jQueryVersion = '1.11.0'; // jquery version
 
-    var ugcStorage = {}
-        ,heatmap
-        ,heatData = []
-        ,googleMap
+    var googleMap
+        ,ugcStorage = {}
         ,ugcCounter = 1
-
+        ,heatData = []
+        ,heatmap
 
     var vendorLibs = {
         'jQuery' : {
