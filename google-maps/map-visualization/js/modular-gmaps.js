@@ -11,6 +11,7 @@
 var opopMapVisualizations = (function(){
     var opopMaps = {}
         ,$opop // local offerpop jquery
+        ,_opop // local offerpop underscore
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
 
     var googleMap
