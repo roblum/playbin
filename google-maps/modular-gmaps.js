@@ -6,6 +6,8 @@ var opopMapVisualizations = (function(){
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
         ,jQueryVersion = '1.11.0'; // jquery version
 
+    var ugcStorage = {}
+
     var vendorLibs = {
         'jQuery' : {
             source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
@@ -88,29 +90,31 @@ var opopMapVisualizations = (function(){
 
             },
             pullFeed : function(){
-                var baseURL // API Endpoint
-                , apiKey // API Key
-                , positive = [] // Positive Latitude Coordinates
-                , negative = []; // Negative Latitude Coordinates
+                var baseURL = 'https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/script/response.json' // API Endpoint
 
-                function jsonp(url, callback) {
-                    var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-                        window[callbackName] = function(data) {
-                            delete window[callbackName];
-                            document.body.removeChild(script);
-                            callback(data);
-                        };
-
-                        var script = document.createElement('script');
-                        script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
-                        document.body.appendChild(script);
-                }
-
-                jsonp('https://api.instagram.com/v1/users/276609664/media/recent/?client_id=df70d4f39d3649a9b724876a0f2de343', function(data) {
+                var ajax = $.getJSON(baseURL,{ get_param: 'value' }, function(data) {
                     console.log(data);
-                        // Send data to negative or positive arrays based on latitude
+                    opopMaps.mapManager.storeUGC(data);
+
+                    if (ugcStorage['item1']){
+                        var first = ugcStorage['item1']
+                            ,coord = new google.maps.LatLng(first.latitude, first.longitude);
+
+                            googleMap.panTo(coord);
+                    }
 
                 });
+
+
+                ajax.complete(function(){
+                      /* Sets to latest item in feed
+                       * Currently no detection if positive/negative
+                       * Will add in functionality to pan to latest item in feed pos || neg
+                       */
+                      opopMaps.Addons.heatMap();
+                      console.log(ugcStorage);
+                });
+
             }
 
         };
