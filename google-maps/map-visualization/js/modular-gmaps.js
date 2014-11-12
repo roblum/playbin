@@ -35,6 +35,15 @@ var opopMapVisualizations = (function(){
     };
 
         opopMaps.prepLib = {
+            /*
+             * Prepare libraries on client page
+             * 1. opopMap.mapManager.init runs jQuery through first - (jQuery.noconflict || global jQuery)
+             * 2. Load google maps visualization library; has callback function (opopMap.mapManager.configureMap);
+             * 3. Creates map and loads RichMarker library
+             * 4. After RichMarker library is loaded; pullFeed()
+             *
+             */
+
             parseLib : function(vendor){
                 var detector = (vendor === 'jQuery') ? opopMaps.prepLib.jqPreLoad : opopMaps.prepLib.handleLoad;
 
