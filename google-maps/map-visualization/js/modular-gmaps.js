@@ -138,17 +138,17 @@ var opopMapVisualizations = (function(){
 
             },
             storeUGC : function(data){
-            console.log(data);
+            // console.log(data);
 
                 for (var i in data){
-                    console.log(data[i])
+                    // console.log(data[i])
                     var content         = data[i].content
                         ,platform_data  = content.platform_data
                         ,geo_data       = platform_data.geo_data
                         ,images         = content.media.media_urls
                         ,network        = content.social_platform;
 
-                    console.log(geo_data);
+                    // console.log(geo_data);
 
                     // Store necessary UGC data into geoStore object
                     var newUGC = {
@@ -184,8 +184,8 @@ var opopMapVisualizations = (function(){
             createMarker : function(data){
             // create variable with path to geo data
             var geo = new google.maps.LatLng(data.latitude, data.longitude)
-                console.log('data');
-                console.log(data);
+                // console.log('data');
+                // console.log(data);
                 var cMarker = new RichMarker({
                     position: geo,
                     map: googleMap,
@@ -235,6 +235,9 @@ var opopMapVisualizations = (function(){
         };
 
         opopMaps.defaults = {
+            map : {
+                zoom : 13
+            },
             heat : {
                 enabled : false
                 ,radius : 20
@@ -248,9 +251,6 @@ var opopMapVisualizations = (function(){
                     'rgba(191, 0, 31, 1)',
                     'rgba(255, 0, 0, 1)'
                 ]
-            },
-            map : {
-                zoom : 13
             }
         };
 
