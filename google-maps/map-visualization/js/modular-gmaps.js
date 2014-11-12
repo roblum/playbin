@@ -9,7 +9,7 @@
  */
 
 var opopMapVisualizations = (function(){
-    var opopMaps = window.opopMaps || {}
+    var opopMaps = {}
         ,$opop // local offerpop jquery
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
         ,jQueryVersion = '1.11.0'; // jquery version
@@ -238,17 +238,17 @@ var opopMapVisualizations = (function(){
         opopMaps.defaults = {
             heat : {
                 enabled : false
-                ,gradient : [
-                        'rgba(0, 255, 255, 0)',
-                        'rgba(0, 255, 255, 1)',
-                        'rgba(0, 63, 255, 1)',
-                        'rgba(0, 0, 255, 1)',
-                        'rgba(0, 0, 127, 1)',
-                        'rgba(63, 0, 91, 1)',
-                        'rgba(191, 0, 31, 1)',
-                        'rgba(255, 0, 0, 1)'
-                    ]
                 ,radius : 20
+                ,gradient : [
+                    'rgba(0, 255, 255, 0)',
+                    'rgba(0, 255, 255, 1)',
+                    'rgba(0, 63, 255, 1)',
+                    'rgba(0, 0, 255, 1)',
+                    'rgba(0, 0, 127, 1)',
+                    'rgba(63, 0, 91, 1)',
+                    'rgba(191, 0, 31, 1)',
+                    'rgba(255, 0, 0, 1)'
+                ]
             },
             map : {
                 zoom : 13
