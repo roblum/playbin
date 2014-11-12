@@ -66,7 +66,7 @@ var opopMapVisualizations = (function(){
                         if (window[vendor] === undefined) {
                             opopMaps.prepLib.handleLoad(vendor);
                         } else {
-                            _opop = window._; // Assign global jQuery to $opop
+                            _opop = window._; // Assign global underscore to _opop
                         }
                     break;
                 }
