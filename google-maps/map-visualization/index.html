@@ -22,19 +22,20 @@
 
 <div id="map-canvas"></div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script>-->
 <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
 <script src="https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js"></script>-->
 
 <script>
+  if (window._){
     console.log('_.=', _.VERSION)
+  }
 </script>
 
 <script type="text/javascript">
-     opopMapInfo = {
+    opopMapInfo = {
           campaign : 'CAMPAIGN_ID',
-          heat : true,
           center : {
             lat : 40.7508095,
             long : -73.9887535
