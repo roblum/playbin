@@ -3,7 +3,9 @@
  * Vendor libs : jQuery 1.11.0, google maps visual, rich-marker
  *      - Stores no conflict version of jQuery to $opop
  *
- *
+ * Setting default values for:
+ * Map - Zoom (13)
+ * Heat - Color (blue-purple), radius (20)
  */
 
 var opopMapVisualizations = (function(){
@@ -93,7 +95,7 @@ var opopMapVisualizations = (function(){
             },
             configureMap : function(){
                 var mapOptions = {
-                    zoom : opopMapInfo.zoom // Set zoom level of map
+                    zoom : (opopMapInfo.zoom || opopMaps.defaults.map.zoom) // Set zoom level of map
                     ,center : new google.maps.LatLng(opopMapInfo.center.lat, opopMapInfo.center.long) // Set center of map
                 }
 
@@ -204,8 +206,8 @@ var opopMapVisualizations = (function(){
                     data: pointArray
                 });
 
-                heatmap.set('radius', (opopMapInfo.radius || opopMaps.defaults.map.radius));
-                heatmap.set('gradient', (opopMapInfo.gradient || opopMaps.defaults.map.gradient));
+                heatmap.set('radius', (opopMapInfo.radius || opopMaps.defaults.heat.radius));
+                heatmap.set('gradient', (opopMapInfo.gradient || opopMaps.defaults.heat.gradient));
 
                 opopMaps.addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
             },
@@ -213,7 +215,7 @@ var opopMapVisualizations = (function(){
                 google.maps.event.addListener(googleMap, 'zoom_changed', function() {
                     var current = googleMap.getZoom();
 
-                    if (current < opopMapInfo.zoom){
+                    if (current < (opopMapInfo.zoom || opopMaps.defaults.map.zoom)){
                         $('.ugc-content').hide();
                         heatmap.setMap(googleMap);
                     } else {
@@ -226,7 +228,7 @@ var opopMapVisualizations = (function(){
         };
 
         opopMaps.defaults = {
-            map : {
+            heat : {
                 gradient : [
                         'rgba(0, 255, 255, 0)',
                         'rgba(0, 255, 255, 1)',
@@ -238,8 +240,11 @@ var opopMapVisualizations = (function(){
                         'rgba(255, 0, 0, 1)'
                     ]
                 ,radius : 20
+            },
+            map : {
+                zoom : 13
             }
-        }
+        };
 
         opopMaps.mapManager.init(opopMapInfo);
 
