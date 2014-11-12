@@ -23,15 +23,15 @@ var opopMapVisualizations = (function(){
         '_' : {
             version : '1.7.0'
             ,source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/underscore.1.7.0.min.js'
-        }
-        ,'jQuery' : {
+        },
+        'jQuery' : {
             version : '1.11.0' // jquery version
             ,source : 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'
-        }
-        ,'google.maps' : {
+        },
+        'google.maps' : {
             source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopMapVisualizations.configureMap'
-        }
-        ,'RichMarker' : {
+        },
+        'RichMarker' : {
             source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/rich-marker.js'
         }
     };
@@ -53,14 +53,22 @@ var opopMapVisualizations = (function(){
                     detector(vendor);
             },
             noConflict : function(vendor){
-                var vendorVersion = vendorLibs[vendor].version
-                var versionDetection = (vendor === 'jQuery') ? window.jQuery.fn.jquery !== vendorVersion : window._.VERSION !== vendorVersion; // _.VERSION is undefined if doesnt exist... Need to refactor
+                switch(vendor){
+                    case 'jQuery':
+                        if (window[vendor] === undefined || window.jQuery.fn.jquery !== vendorLibs['jQuery'].version) {
+                            opopMaps.prepLib.handleLoad(vendor);
+                        } else {
+                            $opop = window.jQuery; // Assign global jQuery to $opop
+                        }
+                    break;
 
-                if (window[vendor] === undefined || versionDetection) {
-                    opopMaps.prepLib.handleLoad(vendor);
-                } else {
-                    $opop = window.jQuery; // Assign global jQuery to $opop
-                    return;
+                    case '_':
+                        if (window[vendor] === undefined) {
+                            opopMaps.prepLib.handleLoad(vendor);
+                        } else {
+                            _opop = window._; // Assign global jQuery to $opop
+                        }
+                    break;
                 }
 
                 return;
