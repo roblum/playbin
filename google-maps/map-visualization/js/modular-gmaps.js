@@ -12,23 +12,28 @@ var opopMapVisualizations = (function(){
     var opopMaps = {}
         ,$opop // local offerpop jquery
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
-        ,jQueryVersion = '1.11.0'; // jquery version
 
     var googleMap
         ,ugcStorage = {}
         ,ugcCounter = 1
         ,heatData = []
         ,heatmap
+        ,jqueryVersion = '1.11.0'
 
     var vendorLibs = {
         'jQuery' : {
-            source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
+            version : '1.11.0' // jquery version
+            ,source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jqueryVersion + '/jquery.min.js'
         }
         ,'google.maps' : {
             source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopMapVisualizations.configureMap'
         }
         ,'RichMarker' : {
             source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/rich-marker.js'
+        }
+        ,'_' : {
+            version : '1.7.0'
+            ,source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/underscore.1.7.0.min.js'
         }
     };
 
@@ -43,12 +48,15 @@ var opopMapVisualizations = (function(){
              */
 
             parseLib : function(vendor){
-                var detector = (vendor === 'jQuery') ? opopMaps.prepLib.jqPreLoad : opopMaps.prepLib.handleLoad;
+                var detector = (vendor === 'jQuery' || vendor === '_') ? opopMaps.prepLib.jqPreLoad : opopMaps.prepLib.handleLoad;
 
                     detector(vendor);
             },
             jqPreLoad : function(vendor){
-                if (window.jQuery === undefined || window.jQuery.fn.jquery !== jQueryVersion) {
+                var vendorVersion = vendorLibs[vendor].version
+                var versionDetection = (vendor === 'jQuery') ? window.jQuery.fn.jquery !== vendorVersion : window._.VERSION !== vendorVersion;
+
+                if (window[vendor] === undefined || versionDetection) {
                     opopMaps.prepLib.handleLoad(vendor);
                 } else {
                     $opop = window.jQuery; // Assign global jQuery to $opop
@@ -87,6 +95,9 @@ var opopMapVisualizations = (function(){
                     opopMaps.prepLib.parseLib('google.maps');
                 } else if (vendor === 'RichMarker'){
                     opopMaps.mapManager.pullFeed();
+                } else if (vendor === '_'){
+                    _opop = _.noConflict();
+                    console.log(_opop.VERSION);
                 }
 
                 return;
@@ -95,6 +106,7 @@ var opopMapVisualizations = (function(){
 
         opopMaps.mapManager = {
             init : function(){
+                opopMaps.prepLib.parseLib('_');
                 opopMaps.prepLib.parseLib('jQuery');
             },
             configureMap : function(){
@@ -110,7 +122,7 @@ var opopMapVisualizations = (function(){
             pullFeed : function(){
                 var baseURL = 'https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/script/response.json' // API Endpoint
 
-                var ajax = $.getJSON(baseURL,{ get_param: 'value' }, function(data) {
+                var ajax = $opop.getJSON(baseURL,{ get_param: 'value' }, function(data) {
                     console.log(data);
                     opopMaps.mapManager.storeUGC(data);
 
@@ -223,10 +235,10 @@ var opopMapVisualizations = (function(){
                     var current = googleMap.getZoom();
 
                     if (current < (opopMapInfo.zoom || opopMaps.defaults.map.zoom)){
-                        $('.ugc-content').hide();
+                        $opop('.ugc-content').hide();
                         heatmap.setMap(googleMap);
                     } else {
-                        $('.ugc-content').show();
+                        $opop('.ugc-content').show();
                         heatmap.setMap(null);
                     }
 
