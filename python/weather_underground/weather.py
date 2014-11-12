@@ -21,9 +21,11 @@ def pullFeed():
 	
 	while inc <= 8:
 		weather.append({
-				'time' 			: hourly[inc]['FCTTIME']['civil']
+				'day'			: hourly[inc]['FCTTIME']['weekday_name_night']
+				,'time' 			: hourly[inc]['FCTTIME']['civil']
 				,'temp' 		: hourly[inc]['temp']['english']
 				,'condition' 	: hourly[inc]['wx']
+				,'icon' 		: hourly[inc]['icon_url']
 			})
 		inc += 1
 		
