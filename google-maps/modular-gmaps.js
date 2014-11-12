@@ -115,6 +115,63 @@ var opopMapVisualizations = (function(){
                       console.log(ugcStorage);
                 });
 
+            },
+            storeUGC : function(data){
+            console.log(data);
+
+                for (var i in data){
+                    console.log(data[i])
+                    var content         = data[i].content
+                        ,platform_data  = content.platform_data
+                        ,geo_data       = platform_data.geo_data
+                        ,images         = content.media.media_urls
+                        ,network        = content.social_platform;
+
+                    console.log(geo_data);
+
+                    // Store necessary UGC data into geoStore object
+                    var newUGC = {
+                                author          : content.author.username
+                                ,avatar         : content.author.profile.avatar
+                                ,caption        : content.text
+                                ,latitude       : geo_data.coordinates.latitude
+                                ,longitude      : geo_data.coordinates.longitude
+                                ,large_image    : images.large_image
+                                ,network        : network
+                                ,timestamp      : new Date(content.created_on).toDateString()
+                                ,platform_link  : platform_data.social_platform_original_url
+                    }
+
+                    // If twitter, store the tweet #
+                    if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
+                    // Twitter desktop stores location as Polygon; Store first polygon value
+                    if (geo_data.coordinates['0']){
+                        newUGC.latitude = geo_data.coordinates['0'].latitude;
+                        newUGC.longitude = geo_data.coordinates['0'].longitude;
+                    }
+
+                    // Store geo data in global array
+                    ugcStorage['item' + ugcCounter] = newUGC; // Store obj in global repo
+                    // Store geo data in heatMap array
+                    heatData.push(new google.maps.LatLng(newUGC.latitude, newUGC.longitude));
+
+                    // Create marker with data
+                    opopMaps.mapManager.createMarker(newUGC);
+                    ugcCounter++;
+                }
+            },
+            createMarker : function(data){
+            // create variable with path to geo data
+            var geo = new google.maps.LatLng(data.latitude, data.longitude)
+                console.log('data');
+                console.log(data);
+                var cMarker = new RichMarker({
+                    position: geo,
+                    map: googleMap,
+                    content: '<div class="ugc-content" id="item' + ugcCounter + '"></div>'
+                });
+
+              cMarker.setMap(googleMap); // Set RichMarker with UGC
             }
 
         };
