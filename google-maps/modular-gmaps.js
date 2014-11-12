@@ -111,7 +111,7 @@ var opopMapVisualizations = (function(){
                        * Currently no detection if positive/negative
                        * Will add in functionality to pan to latest item in feed pos || neg
                        */
-                      opopMaps.Addons.heatMap();
+                      opopMaps.addons.heatMap();
                       console.log(ugcStorage);
                 });
 
@@ -176,7 +176,7 @@ var opopMapVisualizations = (function(){
 
         };
 
-        opopMaps.Addons = {
+        opopMaps.addons = {
             /*
              * Map Add-ons. These features will be optional.
              * Heatmap will be a configuration option.
@@ -205,7 +205,7 @@ var opopMapVisualizations = (function(){
                 heatmap.set('radius', 20);
                 heatmap.set('gradient', (mapOptions.gradient || gradient));
 
-                opopMaps.Addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
+                opopMaps.addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
             },
             toggleHeat : function(){
                 google.maps.event.addListener(googleMap, 'zoom_changed', function() {
@@ -222,6 +222,10 @@ var opopMapVisualizations = (function(){
                 }); // Returns zoom level of map when changed
             }
         };
+
+        opopMaps.defaults = {
+
+        }
 
         opopMaps.mapManager.init(opopMapInfo);
 
