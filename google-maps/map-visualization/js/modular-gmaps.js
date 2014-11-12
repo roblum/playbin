@@ -17,23 +17,22 @@ var opopMapVisualizations = (function(){
         ,ugcStorage = {}
         ,ugcCounter = 1
         ,heatData = []
-        ,heatmap
-        ,jqueryVersion = '1.11.0'
+        ,heatmap;
 
     var vendorLibs = {
-        'jQuery' : {
-            version : jqueryVersion // jquery version
-            ,source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jqueryVersion + '/jquery.min.js'
+        '_' : {
+            version : '1.7.0'
+            ,source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/underscore.1.7.0.min.js'
+        }
+        ,'jQuery' : {
+            version : '1.11.0' // jquery version
+            ,source : 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'
         }
         ,'google.maps' : {
             source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopMapVisualizations.configureMap'
         }
         ,'RichMarker' : {
             source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/rich-marker.js'
-        }
-        ,'_' : {
-            version : '1.7.0'
-            ,source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/underscore.1.7.0.min.js'
         }
     };
 
