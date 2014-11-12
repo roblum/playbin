@@ -20,6 +20,7 @@ var opopMapVisualizations = (function(){
         ,googleMap
         ,ugcCounter = 1
 
+
     var vendorLibs = {
         'jQuery' : {
             source : 'https://ajax.googleapis.com/ajax/libs/jquery/' + jQueryVersion + '/jquery.min.js'
@@ -95,10 +96,7 @@ var opopMapVisualizations = (function(){
 
         opopMaps.mapManager = {
             init : function(){
-                var heat = false;
-
                 opopMaps.prepLib.parseLib('jQuery');
-
             },
             configureMap : function(){
                 var mapOptions = {
@@ -128,12 +126,15 @@ var opopMapVisualizations = (function(){
 
 
                 ajax.complete(function(){
-                      /* Sets to latest item in feed
-                       * Currently no detection if positive/negative
-                       * Will add in functionality to pan to latest item in feed pos || neg
+                      /*
+                       * On complete, enable heat if client enabled in opopMapInfo
+                       * Default value is false
+                       *
                        */
-                      opopMaps.addons.heatMap();
-                      console.log(ugcStorage);
+                        var heatEnabled = (opopMapInfo.heat || opopMaps.defaults.heat.enabled)
+
+                        if (heatEnabled) opopMaps.addons.heatMap();
+                        console.log(ugcStorage);
                 });
 
             },
@@ -236,7 +237,8 @@ var opopMapVisualizations = (function(){
 
         opopMaps.defaults = {
             heat : {
-                gradient : [
+                enabled : false
+                ,gradient : [
                         'rgba(0, 255, 255, 0)',
                         'rgba(0, 255, 255, 1)',
                         'rgba(0, 63, 255, 1)',
