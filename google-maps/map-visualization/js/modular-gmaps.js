@@ -49,11 +49,11 @@ var opopMapVisualizations = (function(){
 
             parseLib : function(vendor){
                 var prepLib = opopMaps.prepLib
-                    ,detector = (vendor === 'jQuery' || vendor === '_') ? prepLib.jqPreLoad : prepLib.handleLoad;
+                    ,detector = (vendor === 'jQuery' || vendor === '_') ? prepLib.noConflict : prepLib.handleLoad;
 
                     detector(vendor);
             },
-            jqPreLoad : function(vendor){
+            noConflict : function(vendor){
                 var vendorVersion = vendorLibs[vendor].version
                 var versionDetection = (vendor === 'jQuery') ? window.jQuery.fn.jquery !== vendorVersion : window._.VERSION !== vendorVersion; // _.VERSION is undefined if doesnt exist... Need to refactor
 
