@@ -1,3 +1,11 @@
+/*
+ * Map Visualization widget for Content API
+ * Vendor libs : jQuery 1.11.0, google maps visual, rich-marker
+ *      - Stores no conflict version of jQuery to $opop
+ *
+ *
+ */
+
 var opopMapVisualizations = (function(){
     var opopMaps = window.opopMaps || {}
         ,googleMap
