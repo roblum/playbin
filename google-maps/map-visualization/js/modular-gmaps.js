@@ -9,18 +9,24 @@
  */
 
 var opopMapVisualizations = (function(){
+    /* General Vars */
     var opopMaps = {}
-        ,$0pop // local offerpop jquery
-        ,_0pop // local offerpop underscore
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
 
+    /* Local Library Vars */
+    var $0pop // private jquery
+        ,_0pop; // private underscore
+
+    /* UGC Vars */
+    var ugcStorage = {}
+        ,ugcCounter = 1;
+
+    /* Map Vars */
     var googleMap
-        ,ugcStorage = {}
-        ,ugcCounter = 1
         ,heatData = []
         ,heatmap;
 
-    /* Modal Variables */
+    /* Modal Vars */
     var _ModalHTML // Underscore template - pulled in through ajax
         ,$0popCanvas // $0pop('#map-canvas-0pop')
         ,$0popFadeBG // $0pop('#fade-bg-0pop')
@@ -240,7 +246,8 @@ var opopMapVisualizations = (function(){
                 _ModalHTML = render('modal-temp-0pop', data);
 
                 function render(tmpl_name, tmpl_data) {
-                    if ( !tmpl_cache[tmpl_name] ) {
+                    if (!tmpl_cache[tmpl_name]){
+                        console.log('loading temp');
                         var tmpl_url = 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/' + tmpl_name + '.html'
                             ,tmpl_html;
 
@@ -248,7 +255,7 @@ var opopMapVisualizations = (function(){
                             url: tmpl_url,
                             method: 'GET',
                             async: false,
-                            success: function(data) {
+                            success: function(data){
                                 tmpl_html = data;
                                 console.log(data);
                             }
@@ -259,7 +266,7 @@ var opopMapVisualizations = (function(){
 
                     return tmpl_cache[tmpl_name](tmpl_data);
                 };
-                console.log(_ModalHTML);
+                // console.log(_ModalHTML);
 
                 opopMaps.modal.populateModal(_ModalHTML);
             },
