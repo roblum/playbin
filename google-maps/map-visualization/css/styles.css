@@ -1,0 +1,35 @@
+html, body, #map-canvas-0pop {
+    height: 500px;
+    width: 500px;
+    margin: 0;
+    padding: 0;
+}
+
+.ugc-content-0pop {
+    background: url('https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/images/Boohoo_pin.png') no-repeat;
+    background-size: 100%;
+    height: 70px;
+    width: 40px;
+}
+
+
+/* MODAL CSS */
+div#fade-bg-0pop {
+     width: 100%;
+     height: 100%;
+     background: rgba(0, 0, 0, 0.44);
+     position: fixed;
+     top: 0;
+     left: 0;
+     display: none;
+}
+
+@media (min-width:650px){
+     div#modal-0pop {
+          width: 600px;
+          background: black;
+          position: fixed;
+          top: 0;
+          left: 0;
+     }
+}
