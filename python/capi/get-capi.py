@@ -1,3 +1,13 @@
+'''
+Python script to pull CAPI and filter by geo enabled
+Writes a .json file to s3 bucket with filtered entries
+
+Params
+- Access_Key, Access_ID, Bucket_Name
+- Collection ID, access_token
+- File path/name to s3 bucket
+'''
+
 from urllib2 import Request, urlopen
 from boto.s3.connection import S3Connection
 import json
