@@ -9,7 +9,6 @@
 <body>
 
     <div id="map-canvas-0pop"></div>
-    <div id="modal-0pop"></div>
     <div id="fade-bg-0pop"></div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
@@ -18,23 +17,25 @@
     <script src="https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js"></script>-->
 
     <script type="0popModal/template" id="modal-template-0pop">
-        <div class="modal-header-0pop"></div>
-        <div class="modal-body-0pop"></div>
+        <div id="modal-0pop">
+            <div class="modal-header-0pop"></div>
+            <div class="modal-body-0pop"></div>
 
-        <div class="modal-footer-0pop">
-            <div class="caption-footer">
-                    <a class="text-muted date-time" href="<%= platform_link %>" target="_blank">
-                        <%= timestamp %> on <span><%= network %></span>
-                    </a>
-                </div>
+            <div class="modal-footer-0pop">
+                <div class="caption-footer">
+                        <a class="text-muted date-time" href="<%= platform_link %>" target="_blank">
+                            <%= timestamp %> on <span><%= network %></span>
+                        </a>
+                    </div>
 
-            <% if (currentItem.platform_ref){%>
-                <div class="pull-right">
-                    <a class="tweet-action tweet-reply" href="https://twitter.com/intent/tweet?in_reply_to=<%= currentItem.platform_ref %>"></a>
-                    <a class="tweet-action tweet-retweet" href="https://twitter.com/intent/retweet?tweet_id=<%= currentItem.platform_ref %>"></a>
-                    <a class="tweet-action tweet-favorite" href="https://twitter.com/intent/favorite?tweet_id=<%= currentItem.platform_ref %>"></a>
-                </div>
-            <% } %>
+                <% if (currentItem.platform_ref){%>
+                    <div class="pull-right">
+                        <a class="tweet-action tweet-reply" href="https://twitter.com/intent/tweet?in_reply_to=<%= currentItem.platform_ref %>"></a>
+                        <a class="tweet-action tweet-retweet" href="https://twitter.com/intent/retweet?tweet_id=<%= currentItem.platform_ref %>"></a>
+                        <a class="tweet-action tweet-favorite" href="https://twitter.com/intent/favorite?tweet_id=<%= currentItem.platform_ref %>"></a>
+                    </div>
+                <% } %>
+            </div>
         </div>
     </script>
 
