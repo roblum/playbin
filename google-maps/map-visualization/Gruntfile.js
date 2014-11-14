@@ -9,6 +9,10 @@ module.exports = function (grunt) {
               files: ['js/*.js']
               ,tasks: ['s3']
             }
+            ,css : {
+              files: ['css/*.css']
+              ,tasks: ['s3']
+            }
         }
 
     ,aws: grunt.file.readJSON('../../../Offerpop/s3.json')
@@ -32,6 +36,9 @@ module.exports = function (grunt) {
         },{
           src: 'js/modular-gmaps.js'
           ,dest: 'roblum/noconflict/modular-gmaps.js'
+        },{
+          src: 'css/styles.css'
+          ,dest: 'roblum/noconflict/css/styles.css'
         }
       ]
     }
