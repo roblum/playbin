@@ -251,7 +251,7 @@ var opopMapVisualizations = (function(){
                         var tmpl_url = 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/' + tmpl_name + '.html'
                             ,tmpl_html;
 
-                        $.ajax({
+                        $0pop.ajax({
                             url: tmpl_url,
                             method: 'GET',
                             async: false,
@@ -307,8 +307,7 @@ var opopMapVisualizations = (function(){
                 $0popFadeBG.empty();
                 $0popFadeBG.append(generated);
 
-                // Reveal
-                $0popFadeBG.fadeIn();
+                $0popFadeBG.fadeIn(); // Reveal Modal
             }
         };
 
