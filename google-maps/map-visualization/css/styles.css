@@ -21,15 +21,15 @@ div#fade-bg-0pop {
      position: fixed;
      top: 0;
      left: 0;
+     overflow: auto;
      display: none;
 }
 
 @media (min-width:650px){
      div#modal-0pop {
           width: 600px;
-          background: black;
-          position: fixed;
-          top: 0;
-          left: 0;
+          background: #fff;
+          margin:auto;
+          margin-top: 30px;
      }
 }
