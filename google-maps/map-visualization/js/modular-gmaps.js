@@ -1,7 +1,7 @@
 /*
  * Map Visualization widget for Content API
  * Vendor libs : jQuery 1.11.0, google maps visual, rich-marker
- *      - Stores no conflict version of jQuery to $opop
+ *      - Stores no conflict version of jQuery to $0pop
  *
  * Setting default values for:
  * Map - Zoom (13)
@@ -10,8 +10,8 @@
 
 var opopMapVisualizations = (function(){
     var opopMaps = {}
-        ,$opop // local offerpop jquery
-        ,_opop // local offerpop underscore
+        ,$0pop // local offerpop jquery
+        ,_0pop // local offerpop underscore
         ,bodyHead = document.querySelector('head') || document.querySelector('body')
 
     var googleMap
@@ -59,7 +59,7 @@ var opopMapVisualizations = (function(){
                         if (window[vendor] === undefined || window.jQuery.fn.jquery !== vendorLibs['jQuery'].version) {
                             opopMaps.prepLib.handleLoad(vendor);
                         } else {
-                            $opop = window.jQuery; // Assign global jQuery to $opop
+                            $0pop = window.jQuery; // Assign global jQuery to $0pop
                         }
                     break;
 
@@ -67,7 +67,7 @@ var opopMapVisualizations = (function(){
                         if (window[vendor] === undefined) {
                             opopMaps.prepLib.handleLoad(vendor);
                         } else {
-                            _opop = window._; // Assign global underscore to _opop
+                            _0pop = window._; // Assign global underscore to _0pop
                         }
                     break;
                 }
@@ -99,13 +99,13 @@ var opopMapVisualizations = (function(){
             loadSteps : function(vendor){
                 switch(vendor){
                     case '_':
-                        _opop = _.noConflict();
-                        console.log('_.noconf:', _opop.VERSION);
+                        _0pop = _.noConflict();
+                        console.log('_.noconf:', _0pop.VERSION);
                     break;
 
                     case 'jQuery':
-                        $opop = window.jQuery.noConflict(true);
-                        console.log($opop.fn.jquery);
+                        $0pop = window.jQuery.noConflict(true);
+                        console.log($0pop.fn.jquery);
                     break;
 
                     case 'RichMarker':
@@ -136,7 +136,7 @@ var opopMapVisualizations = (function(){
             pullFeed : function(){
                 var baseURL = 'https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/script/response.json' // API Endpoint
 
-                var ajax = $opop.getJSON(baseURL,{ get_param: 'value' }, function(data) {
+                var ajax = $0pop.getJSON(baseURL,{ get_param: 'value' }, function(data) {
                     console.log(data);
                     opopMaps.mapManager.storeUGC(data);
 
@@ -249,10 +249,10 @@ var opopMapVisualizations = (function(){
                     var current = googleMap.getZoom();
 
                     if (current < (opopMapInfo.zoom || opopMaps.defaults.map.zoom)){
-                        $opop('.ugc-content').hide();
+                        $0pop('.ugc-content').hide();
                         heatmap.setMap(googleMap);
                     } else {
-                        $opop('.ugc-content').show();
+                        $0pop('.ugc-content').show();
                         heatmap.setMap(null);
                     }
 
