@@ -228,8 +228,8 @@ var opopMapVisualizations = (function(){
 
         opopMaps.modal = {
             pinModalEvents : function(){
-                var $0popCanvas = $0pop('#map-canvas-0pop')
-                    ,ugcPins = '.ugc-content-0pop';
+                var $0popCanvas     = $0pop('#map-canvas-0pop')
+                    ,ugcPins        = '.ugc-content-0pop';
 
                     /* BRING THUMBNAIL TO TOP */
                     $0popCanvas.on({
@@ -249,20 +249,23 @@ var opopMapVisualizations = (function(){
                     $0popCanvas.on('click', ugcPins, function(){
                         var current = this.id;
                         opopMaps.modal.populateModal(current);
-                        console.log(current);
                     }); // Returns id of UGC content container when clicked
             },
             populateModal : function(current){
                 currentItem = ugcStorage[current];
+                var $0popModal = $0pop('#modal-0pop');
 
-                var temp = _.template($0pop('#modal-template').html());
+                var temp = _.template($0pop('#modal-template-0pop').html());
                 var generated = temp(currentItem);
 
                 console.log('currentItem', currentItem);
 
-                $0popcontentModal.empty();
-                $0popcontentModal.append(generated);
-                $0popcontentModal.modal('show');
+                $0popModal.empty();
+                $0popModal.append(generated);
+
+                // Reveal
+                $0popModal.fadeIn();
+                $0pop('#fade-bg-0pop').fadeIn();
             }
         };
 
