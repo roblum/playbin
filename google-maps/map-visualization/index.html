@@ -1,52 +1,48 @@
 <!DOCTYPE html>
 <html>
-<head>
-     <title></title>
-     <style type="text/css">
-     html, body, #map-canvas {
-       height: 500px;
-       width: 500px;
-       margin: 0;
-       padding: 0;
-      }
 
-      .ugc-content {
-         background: url('https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/images/Boohoo_pin.png') no-repeat;
-         background-size: 100%;
-         height: 70px;
-         width: 40px;
-      }
-  </style>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
+
 <body>
 
-<div id="map-canvas"></div>
+    <div id="map-canvas-0pop"></div>
 
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script>-->
-<!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
-<script src="https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js"></script>-->
+    <div id="modal-0pop">
+        <div class="modal-header-0pop"></div>
+        <div class="modal-body-0pop"></div>
+        <div class="modal-footer-0pop"></div>
+    </div>
 
-<script>
-  if (window._){
-    console.log('_.=', _.VERSION)
-  }
-</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+    <script src="https://s3.amazonaws.com/assets.offerpop.com/roblum/Content_API/maps_v2/script/rich-marker.js"></script>-->
 
-<script type="text/javascript">
+    <script>
+    if (window._) {
+        console.log('_.=', _.VERSION)
+    }
+    </script>
+
+    <script type="text/javascript">
     opopMapInfo = {
-          campaign : 'CAMPAIGN_ID',
-          center : {
-            lat : 40.7508095,
-            long : -73.9887535
-          },
-          styles : 'styles go here'
+        campaign: 'CAMPAIGN_ID',
+        heat: true,
+        center: {
+            lat: 40.7508095,
+            long: -73.9887535
+        },
+        styles: 'styles go here'
     };
 
     var e = document.createElement('script');
     e.src = 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/modular-gmaps.js';
     e.async = true;
     document.body.appendChild(e);
-</script>
+    </script>
 </body>
+
 </html>
