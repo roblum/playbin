@@ -20,6 +20,14 @@ var opopMapVisualizations = (function(){
         ,heatData = []
         ,heatmap;
 
+    /* Modal Variables */
+    var _ModalHTML // Underscore template - pulled in through ajax
+        ,$0popCanvas // $0pop('#map-canvas-0pop')
+        ,$0popFadeBG // $0pop('#fade-bg-0pop')
+        ,ugcPins // '.ugc-content-0pop';
+        ,tmpl_cache = {};
+
+
     var vendorLibs = {
         '_' : {
             version : '1.7.0'
@@ -132,6 +140,7 @@ var opopMapVisualizations = (function(){
                 googleMap = new google.maps.Map(document.getElementById('map-canvas-0pop'), mapOptions);
                 opopMaps.prepLib.parseLib('RichMarker');
 
+                // opopMaps.modal.load_Temp();
                 opopMaps.modal.pinModalEvents();
             },
             pullFeed : function(){
@@ -227,9 +236,37 @@ var opopMapVisualizations = (function(){
         };
 
         opopMaps.modal = {
+            load_Temp : function(data){
+                _ModalHTML = render('modal-temp-0pop', data);
+
+                function render(tmpl_name, tmpl_data) {
+                    if ( !tmpl_cache[tmpl_name] ) {
+                        var tmpl_url = 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/' + tmpl_name + '.html'
+                            ,tmpl_html;
+
+                        $.ajax({
+                            url: tmpl_url,
+                            method: 'GET',
+                            async: false,
+                            success: function(data) {
+                                tmpl_html = data;
+                                console.log(data);
+                            }
+                        });
+
+                        tmpl_cache[tmpl_name] = _0pop.template(tmpl_html);
+                    }
+
+                    return tmpl_cache[tmpl_name](tmpl_data);
+                };
+                console.log(_ModalHTML);
+
+                opopMaps.modal.populateModal(_ModalHTML);
+            },
             pinModalEvents : function(){
-                var $0popCanvas     = $0pop('#map-canvas-0pop')
-                    ,ugcPins        = '.ugc-content-0pop';
+                $0popCanvas     = $0pop('#map-canvas-0pop')
+                $0popFadeBG     = $0pop('#fade-bg-0pop')
+                ugcPins         = '.ugc-content-0pop';
 
                     /* BRING THUMBNAIL TO TOP */
                     $0popCanvas.on({
@@ -248,24 +285,23 @@ var opopMapVisualizations = (function(){
 
                     $0popCanvas.on('click', ugcPins, function(){
                         var current = this.id;
-                        opopMaps.modal.populateModal(current);
+
+                        currentItem = ugcStorage[current];
+                        opopMaps.modal.load_Temp(currentItem);
                     }); // Returns id of UGC content container when clicked
+
+                    /*********************************************************************/
+                    /* Will eventually need to move this when implementing other widgets */
+                    $0popFadeBG.on('click', '.modal-close-0pop', function(){
+                        $0pop('#fade-bg-0pop').fadeOut();
+                    }); // Close Modal
             },
-            populateModal : function(current){
-                currentItem = ugcStorage[current];
-                var $0popModal = $0pop('#modal-0pop');
-
-                var temp = _.template($0pop('#modal-template-0pop').html());
-                var generated = temp(currentItem);
-
-                console.log('currentItem', currentItem);
-
-                $0popModal.empty();
-                $0popModal.append(generated);
+            populateModal : function(generated){
+                $0popFadeBG.empty();
+                $0popFadeBG.append(generated);
 
                 // Reveal
-                $0popModal.fadeIn();
-                $0pop('#fade-bg-0pop').fadeIn();
+                $0popFadeBG.fadeIn();
             }
         };
 
