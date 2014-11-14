@@ -129,9 +129,10 @@ var opopMapVisualizations = (function(){
                     ,center : new google.maps.LatLng(opopMapInfo.center.lat, opopMapInfo.center.long) // Set center of map
                 }
 
-                googleMap = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+                googleMap = new google.maps.Map(document.getElementById('map-canvas-0pop'), mapOptions);
                 opopMaps.prepLib.parseLib('RichMarker');
 
+                opopMaps.modal.pinModalEvents();
             },
             pullFeed : function(){
                 var baseURL = 'https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/script/response.json' // API Endpoint
@@ -160,6 +161,8 @@ var opopMapVisualizations = (function(){
 
                         if (heatEnabled) opopMaps.addons.heatMap();
                         console.log(ugcStorage);
+
+                        return;
                 });
 
             },
@@ -215,12 +218,52 @@ var opopMapVisualizations = (function(){
                 var cMarker = new RichMarker({
                     position: geo,
                     map: googleMap,
-                    content: '<div class="ugc-content" id="item' + ugcCounter + '"></div>'
+                    content: '<div class="ugc-content-0pop" id="item' + ugcCounter + '"></div>'
                 });
 
               cMarker.setMap(googleMap); // Set RichMarker with UGC
             }
 
+        };
+
+        opopMaps.modal = {
+            pinModalEvents : function(){
+                var $0popCanvas = $0pop('#map-canvas-0pop')
+                    ,ugcPins = '.ugc-content-0pop';
+
+                    /* BRING THUMBNAIL TO TOP */
+                    $0popCanvas.on({
+                        mouseenter : function(){
+                            $0pop(this).css({
+                                'position' : 'relative'
+                                ,'z-index' : '99999'
+                            });
+                        },
+                        mouseleave : function(){
+                            $0pop(this).css({
+                                'z-index' : '1'
+                            });
+                        }
+                    }, ugcPins); // Bring thumbnail to front if mouseover
+
+                    $0popCanvas.on('click', ugcPins, function(){
+                        var current = this.id;
+                        opopMaps.modal.populateModal(current);
+                        console.log(current);
+                    }); // Returns id of UGC content container when clicked
+            },
+            populateModal : function(current){
+                currentItem = ugcStorage[current];
+
+                var temp = _.template($0pop('#modal-template').html());
+                var generated = temp(currentItem);
+
+                console.log('currentItem', currentItem);
+
+                $0popcontentModal.empty();
+                $0popcontentModal.append(generated);
+                $0popcontentModal.modal('show');
+            }
         };
 
         opopMaps.addons = {
@@ -246,15 +289,16 @@ var opopMapVisualizations = (function(){
             },
             toggleHeat : function(){
                 google.maps.event.addListener(googleMap, 'zoom_changed', function() {
-                    var current = googleMap.getZoom();
+                    var current = googleMap.getZoom()
+                        ,$0popUGC = $0pop('.ugc-content-0pop');
 
-                    if (current < (opopMapInfo.zoom || opopMaps.defaults.map.zoom)){
-                        $0pop('.ugc-content').hide();
-                        heatmap.setMap(googleMap);
-                    } else {
-                        $0pop('.ugc-content').show();
-                        heatmap.setMap(null);
-                    }
+                        if (current < (opopMapInfo.zoom || opopMaps.defaults.map.zoom)){
+                            $0popUGC.hide();
+                            heatmap.setMap(googleMap);
+                        } else {
+                            $0popUGC.show();
+                            heatmap.setMap(null);
+                        }
 
                 }); // Returns zoom level of map when changed
             }
