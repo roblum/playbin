@@ -141,6 +141,7 @@ var opopMapVisualizations = (function(){
                 var mapOptions = {
                     zoom : (opopMapInfo.zoom || opopMaps.defaults.map.zoom) // Set zoom level of map
                     ,center : new google.maps.LatLng(opopMapInfo.center.lat, opopMapInfo.center.long) // Set center of map
+                    ,minZoom : 2
                 }
 
                 googleMap = new google.maps.Map(document.getElementById('map-canvas-0pop'), mapOptions);
