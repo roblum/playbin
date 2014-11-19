@@ -1,10 +1,17 @@
-html, body, #map-canvas-0pop {
+html, body{
+    padding:0;
+    margin:0;
+}
+
+
+/***********/
+/* MAP CSS */
+#map-canvas-0pop {
     height: 500px;
-    width: 500px;
+    width: 100%;
     margin: 0;
     padding: 0;
 }
-
 .ugc-content-0pop {
     background: url('https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/images/Boohoo_pin.png') no-repeat;
     background-size: 100%;
@@ -12,45 +19,206 @@ html, body, #map-canvas-0pop {
     width: 40px;
 }
 
+/****************/
+/* CAROUSEL CSS */
+#carousel-0pop .item{
+  margin: 3px;
+}
+#carousel-0pop .item img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+#carousel-0pop img{
+    cursor: pointer;
+}
+        /*Testing slider*/
+        #carousel-0pop .lazyOwl {
+            width:100%;
+            height:290px;
+            background-size: cover;
+            cursor: pointer;
+        }
+        #carousel-0pop .social-slider-0pop.twitter-0pop {
+            background: #18abdd url('https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/images/twitter_logo_large.png') no-repeat;
+            background-position: 10px;
+        }
+        #carousel-0pop .social-slider-0pop.instagram-0pop {
+            background: #808080 url('https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/images/instagram_logo_large.png') no-repeat;
+            background-position: 10px;
+        }
+        #carousel-0pop .social-slider-0pop {
+            position: absolute;
+            width: 55px;
+            height: 51px;
+            border-radius: 5px 0 0 5px;
+            opacity: .8;
+            overflow: hidden;
+            right: 3px;
+            color: #fff;
+            bottom: 10px;
+        }
 
+#carousel-0pop .owl-pagination{
+    display:none;
+}
+#carousel-0pop .owl-prev {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    opacity: 0.7;
+    opacity: 0.7;
+    height: 10%;
+    border-radius: 0;
+    padding-top: 10%;
+}
+#carousel-0pop .owl-next {
+    position: absolute;
+    top: 40%;
+    right: 0;
+    opacity: 0.7;
+    opacity: 0.7;
+    height: 10%;
+    border-radius: 0;
+    padding-top: 10%;
+}
+
+/*************/
 /* MODAL CSS */
 div#fade-bg-0pop {
-     width: 100%;
-     height: 100%;
-     background: rgba(0, 0, 0, 0.44);
-     position: fixed;
-     top: 0;
-     left: 0;
-     overflow: auto;
-     display: none;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.44);
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    display: none;
+    z-index: 9999999999;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif
 }
 
 /* Close Button */
 .stretch-close-0pop{
-     width:100%;
-     height:100%;
-     position: fixed;
+    width:100%;
+    height:100%;
+    position: fixed;
 }
 .modal-header-0pop > .modal-close-0pop {
-     position: absolute;
-     top: -5px;
-     right: -8px;
-     background: url('https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/images/close_circle.png') no-repeat 0 0;
-     width: 28px;
-     height: 28px;
-     opacity: 0.5;
-     z-index: 1000;
-     outline: none;
-     border: 0px;
-     cursor: pointer;
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: url('https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/images/close_circle.png') no-repeat 0 0;
+    width: 28px;
+    height: 28px;
+    opacity: 0.5;
+    z-index: 1000;
+    outline: none;
+    border: 0px;
+    cursor: pointer;
+}
+
+/* Body */
+.modal-body-0pop{
+    width:100%;
+    overflow: hidden;
+}
+.details-media-0pop img {
+    width: 100%;
+}
+.details-media-0pop .social-slider-0pop {
+    position: absolute;
+    margin-top: -62px;
+    width: 55px;
+    height: 51px;
+    border-radius: 5px 0 0 5px;
+    opacity: .8;
+    overflow: hidden;
+    right: 0px;
+    color: #fff;
+}
+.details-media-0pop .social-slider-0pop.twitter-0pop{
+    background: #18abdd url('https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/images/twitter_logo_large.png') no-repeat;
+    background-position: 10px;
+}
+.details-media-0pop .social-slider-0pop.instagram-0pop{
+    background: #808080 url('https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/images/instagram_logo_large.png') no-repeat;
+    background-position: 10px;
+}
+.modal-footer-0pop {
+    padding: 2%;
+}
+img.avatar-0pop {
+    width: 8%;
+    border-radius: 5px;
+    vertical-align: middle;
+}
+.caption-user-0pop {
+    display: inline-block;
+}
+.caption-user-0pop a {
+    text-decoration: none;
+    color: #428bca;
+    text-transform: capitalize;
+}
+.caption-body-0pop {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.pull-right-0pop {
+    float: right;
+}
+a.date-time-0pop {
+    color: #999;
+    font-size: 10px;
+    text-decoration: none;
+}
+
+/* Modal Twitter */
+.twitter-follow-0pop{
+    background-color: #eee;
+    background-image: -webkit-linear-gradient(#fff,#dedede);
+    background-image: linear-gradient(#fff,#dedede);
+    border: #ccc solid 1px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 1px 0 0 0;
+    position: relative;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    width: 60px;
+    height: 20px;
+    color: #333;
+    border-color: #ccc;
+    display: inline-block;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+}
+.twitter-follow-0pop i{
+    background: url('https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/images/follow-icons.png') no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    height: 13px;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 16px;
+}
+.pull-right-0pop .twitter-follow-0pop span{
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    right: 5px;
+    position: absolute;
 }
 
 @media (min-width:650px){
      div#modal-0pop {
           width: 600px;
           background: #fff;
-          margin:auto;
-          margin-top: 30px;
+          margin: 30px auto;
           position: relative;
      }
 }
