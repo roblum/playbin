@@ -9,32 +9,44 @@
 <body>
 
     <div id="map-canvas-0pop"></div>
+    <div id="carousel-0pop" class="responsive-carousel-0pop"></div>
     <div id="fade-bg-0pop"></div>
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script> -->
 
-    <script>
+    <!-- <script>
     if (window._) {
         console.log('_.=', _.VERSION)
     }
-    </script>
+    </script> -->
 
     <script type="text/javascript">
     opopMapInfo = {
-        campaign: 'CAMPAIGN_ID',
-        heat: true,
-        center: {
-            lat: 40.7508095,
-            long: -73.9887535
-        },
-        styles: 'styles go here'
+        type: 'map',
+        campaignId: 6900,
+        access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
+        heat: true
     };
 
+    opopCarouselInfo = {
+        type: 'carousel',
+        campaignId: 6900,
+        access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
+        styles: {}
+    }
+
     var e = document.createElement('script');
-    e.src = 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/modular-gmaps.js';
+    e.src = 'https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/js/visualizationSdk.js';
     e.async = true;
     document.body.appendChild(e);
+
+    e.onload = function(){
+        opopVisualWidgets = [
+            opopVisual.initMap,
+            opopVisual.initOwl
+            ];
+    }
     </script>
 </body>
 
