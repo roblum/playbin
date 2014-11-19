@@ -1,54 +1,58 @@
 <div class="modal-close-0pop stretch-close-0pop"></div>
 <div id="modal-0pop">
+
     <div class="modal-header-0pop">
         <div class="modal-close-0pop"></div>
     </div>
 
     <div class="modal-body-0pop">
-            <div class="details-media-wrapper">
-                <div class="details-media">
+            <div class="details-wrapper-0pop">
+                <div class="details-media-0pop">
                     <img src="<%= large_image %>">
-                    <a class="social-slider <%= network %>" href="http://<%= network %>.com/" target="_blank"></a>
+                    <a class="social-slider-0pop <%= network %>-0pop" href="http://<%= network %>.com/" target="_blank"></a>
                 </div>
             </div>
+    </div>
 
-            <div class="caption-content">
-                <div class="caption-header">
-                    <img class="img-rounded avatar" src="<%= avatar %>">
-                    <div class="caption-user">
+    <div class="modal-footer-0pop">
+            <div class="caption-content-0pop">
+                <div class="caption-header-0pop">
+                    <img class="avatar-0pop" src="<%= avatar %>">
+                    <div class="caption-user-0pop">
                         <a href="http://<%= network %>.com/<%= author %>" target="_blank">
                             <strong><%= author %></strong>
                         </a>
                     </div>
 
                     <% if (currentItem.platform_ref){%>
-                        <div class="pull-right">
-                            <a class="btn btn-default follow-button pull-right" target="_blank" href="https://twitter.com/intent/follow?region=follow_link&amp;screen_name=<%= author %>&amp;tw_p=followbutton&amp;variant=2.0">
+                        <div class="pull-right-0pop">
+                            <a class="twitter-follow-0pop" target="_blank" href="https://twitter.com/intent/follow?region=follow_link&amp;screen_name=<%= author %>&amp;tw_p=followbutton&amp;variant=2.0">
                                 <i class="icon"></i><span>Follow</span>
                             </a>
                         </div>
                     <% } %>
                 </div>
 
-                <div class="caption-body">
+                <div class="caption-body-0pop">
                     <%= caption %>
                 </div>
             </div>
+
+            <div class="modal-timestamp-0pop">
+                <div class="timestamp-0pop">
+                    <a class="date-time-0pop" href="<%= platform_link %>" target="_blank">
+                        <%= timestamp %> on <span><%= network %></span>
+                    </a>
+                </div>
+
+                <% if (currentItem.platform_ref){%>
+                    <div class="pull-right-0pop">
+                        <a class="tweet-action-0pop tweet-reply-0pop" href="https://twitter.com/intent/tweet?in_reply_to=<%= currentItem.platform_ref %>"></a>
+                        <a class="tweet-action-0pop tweet-retweet-0pop" href="https://twitter.com/intent/retweet?tweet_id=<%= currentItem.platform_ref %>"></a>
+                        <a class="tweet-action-0pop tweet-favorite-0pop" href="https://twitter.com/intent/favorite?tweet_id=<%= currentItem.platform_ref %>"></a>
+                    </div>
+                <% } %>
+            </div>
     </div>
 
-    <div class="modal-footer-0pop">
-        <div class="caption-footer">
-                <a class="text-muted date-time" href="<%= platform_link %>" target="_blank">
-                    <%= timestamp %> on <span><%= network %></span>
-                </a>
-            </div>
-
-        <% if (currentItem.platform_ref){%>
-            <div class="pull-right">
-                <a class="tweet-action tweet-reply" href="https://twitter.com/intent/tweet?in_reply_to=<%= currentItem.platform_ref %>"></a>
-                <a class="tweet-action tweet-retweet" href="https://twitter.com/intent/retweet?tweet_id=<%= currentItem.platform_ref %>"></a>
-                <a class="tweet-action tweet-favorite" href="https://twitter.com/intent/favorite?tweet_id=<%= currentItem.platform_ref %>"></a>
-            </div>
-        <% } %>
-    </div>
 </div>
