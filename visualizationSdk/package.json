@@ -1,12 +1,12 @@
 {
-  "name": "no-conflict-versions",
+  "name": "visualizationSdk",
   "version": "0.1.0",
   "author": {
     "name": "Rob Lum",
     "email": "robert.lum@offerpop.com",
     "url": "https://github.com/roblum"
   },
-  "description": "jQuery loading",
+  "description": "visualizationSdk",
   "repository": {
     "type": "git",
     "url": "https://github.com/roblum/Offerpop"
