@@ -7,24 +7,35 @@
  * Map - Zoom (13)
  * Heat - Color (blue-purple), radius (20)
  */
+var $0pop;
 
-var opopMapVisualizations = (function(){
+var opopVisual = (function(){
     /* General Vars */
-    var opopMaps = {}
-        ,bodyHead = document.querySelector('head') || document.querySelector('body')
+    var opopGlobal = {}
+        ,mapManager = {}
+        ,owlCarousel = {}
+        ,bodyHead = document.querySelector('head') || document.querySelector('body');
 
     /* Local Library Vars */
-    var $0pop // private jquery
-        ,_0pop; // private underscore
+    var _0pop; // private underscore
 
     /* UGC Vars */
-    var ugcStorage = {}
-        ,ugcCounter = 1;
+    var ugcStorage = {
+            map         : {
+                ugcCounter : 1
+            },
+            carousel    : {
+                ugcCounter : 1
+            }
+    };
 
     /* Map Vars */
     var googleMap
         ,heatData = []
         ,heatmap;
+
+    /* Carousel Vars */
+    var $0popCarousel;
 
     /* Modal Vars */
     var _ModalHTML // Underscore template - pulled in through ajax
@@ -33,25 +44,161 @@ var opopMapVisualizations = (function(){
         ,ugcPins // '.ugc-content-0pop';
         ,tmpl_cache = {};
 
-
+    var visualizationLib = 'https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/';
     var vendorLibs = {
-        '_' : {
-            version : '1.7.0'
-            ,source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/underscore.1.7.0.min.js'
-        },
         'jQuery' : {
             version : '1.11.0' // jquery version
             ,source : 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'
         },
+        '_' : {
+            version : '1.7.0'
+            ,source : visualizationLib + 'libs/underscore.1.7.0.min.js'
+        },
         'google.maps' : {
-            source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopMapVisualizations.configureMap'
+            source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopVisual.configureMap'
         },
         'RichMarker' : {
-            source : 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/rich-marker.js'
+            source : visualizationLib + 'libs/rich-marker.js'
+        },
+        'owlCarousel' : {
+            source : visualizationLib + 'libs/owlCarousel.js'
+            ,css : visualizationLib + 'libs/owlCarousel.css'
+        },
+        'modalTemplate' : {
+            source : visualizationLib + 'modal-temp-0pop.html'
+        },
+        'carouselTemplate' : {
+            source : visualizationLib + 'carousel-temp-0pop.html'
+        },
+        'visualization-styles' : {
+            css : visualizationLib  + 'css/styles.css'
         }
     };
 
-        opopMaps.prepLib = {
+        opopGlobal.general = {
+                loadDependencies : function(){
+                        opopGlobal.prepLib._parseLib('jQuery');
+                        opopGlobal.prepLib._parseLib('_');
+                        opopGlobal.prepLib._loadCSS('visualization-styles');
+                },
+                buildWidget : function(widgets){
+                    // console.log(updated[0]);
+                    if (widgets[0]) widgets[0]();
+                    updated = widgets.slice(1, widgets.length);
+
+                        console.log(updated);
+                },
+                _load_Temp : function(temp, data){ // Load in _.temp for owl carousel items
+                    console.log('data', data);
+                    _ModalHTML = render(temp + '-temp-0pop', data);
+
+                    function render(tmpl_name, tmpl_data) {
+                        if (!tmpl_cache[tmpl_name]){
+                            var tmpl_url = vendorLibs[temp + 'Template'].source
+                                ,tmpl_html;
+
+                            $0pop.ajax({
+                                url: tmpl_url,
+                                method: 'GET',
+                                async: false,
+                                success: function(data){
+                                    tmpl_html = data;
+                                    // console.log(data);
+                                }
+                            });
+
+                            tmpl_cache[tmpl_name] = _0pop.template(tmpl_html);
+                        }
+
+                        return tmpl_cache[tmpl_name](tmpl_data);
+                    };
+                    // console.log(_ModalHTML);
+                    return _ModalHTML;
+                },
+                _pullFeed : function(widget, page){
+                    var baseURL             = 'https://api.offerpop.com/v1/ugc/collections/' // API Endpoint
+                        ,campaign           = widget.campaignId
+                        ,access_token       = widget.access_token
+                        ,page_size          = widget.page_size || 100
+                        ,approval_status    = widget.approval || 'app'
+                        ,social_platform    = widget.platform || 'twitter%2Cinstagram'
+                        ,media_type         = widget.media_type || 'video%2Cimage'
+                        ,order              = widget.order || 'date_asc'
+                        ,next               = false;
+
+                            console.log(widget);
+                        var widgetType = widget.type;
+                        console.log(widgetType);
+
+                        var ajax = $0pop.getJSON(
+                                    baseURL +
+                                    campaign +
+                                    '/?access_token='   + access_token +
+                                    '&page='            + page + // passed in as a parameter
+                                    '&approval_status=' + approval_status +
+                                    '&page_size='       + page_size +
+                                    '&social_platform=' + social_platform +
+                                    '&order='           + order +
+                                    '&media_type='      + media_type
+
+                        ,{ get_param: 'value' }, function(data) {
+                        console.log(data);
+
+                        var ugcItems = data['_embedded']['ugc:item'];
+
+                        switch(widgetType){
+                            case 'map':
+                                mapManager._storeUGC(ugcItems);
+                                opopGlobal.modal._pinModalEvents();
+
+                                if (data['_links'].next.href) {
+                                    var nextUrl     = data['_links'].next.href
+                                        ,pageIndex  = nextUrl.indexOf('&page=')
+                                        ,nextPage   = nextUrl.slice(pageIndex + 6, nextUrl.length);
+
+                                        console.log(nextPage);
+                                        opopGlobal.general._pullFeed(opopMapInfo, nextPage);
+
+                                }
+
+                                if (ugcStorage.map['item1']){
+                                    var first = ugcStorage.map['item1']
+                                        ,coord = new google.maps.LatLng(first.latitude, first.longitude);
+
+                                        googleMap.panTo(coord);
+                                }
+                            break;
+
+                            case 'carousel':
+                                owlCarousel._storeUGC(ugcItems);
+                                opopGlobal.modal._pinModalEvents();
+                            break;
+
+                        }
+
+                    });
+
+
+                    ajax.complete(function(){
+                          /*
+                           * On complete, enable heat if client enabled in opopMapInfo
+                           * Default value is false
+                           *
+                           */
+                            if (widgetType === 'map'){
+                                var heatEnabled = (opopMapInfo.heat || opopGlobal.defaults.heat.enabled)
+                                if (heatEnabled) mapManager.addons._heatMap();
+                            }
+                            console.log(ugcStorage);
+
+                            opopGlobal.general.buildWidget(updated)
+                            return;
+                    });
+
+                },
+        };
+
+        opopGlobal.prepLib = {
             /*
              * Prepare libraries on client page
              * 1. opopMap.mapManager.init runs jQuery through first - (jQuery.noconflict || global jQuery)
@@ -60,26 +207,31 @@ var opopMapVisualizations = (function(){
              * 4. After RichMarker library is loaded; pullFeed()
              *
              */
-
-            parseLib : function(vendor){
-                var prepLib = opopMaps.prepLib
-                    ,detector = (vendor === 'jQuery' || vendor === '_') ? prepLib.noConflict : prepLib.handleLoad;
+            _parseLib : function(vendor){
+                var prepLib = opopGlobal.prepLib
+                    ,detector = (vendor === 'jQuery' || vendor === '_') ? prepLib._noConflict : prepLib._handleLoad;
 
                     detector(vendor);
             },
-            noConflict : function(vendor){
+            _noConflict : function(vendor){
                 switch(vendor){
                     case 'jQuery':
-                        if (window[vendor] === undefined || window.jQuery.fn.jquery !== vendorLibs['jQuery'].version) {
-                            opopMaps.prepLib.handleLoad(vendor);
+                        if ($0pop){
+                            return;
+                        } else if (window[vendor] === undefined || window.jQuery.fn.jquery !== vendorLibs['jQuery'].version) {
+                            console.log('handleload');
+                            opopGlobal.prepLib._handleLoad(vendor);
                         } else {
                             $0pop = window.jQuery; // Assign global jQuery to $0pop
                         }
                     break;
 
                     case '_':
-                        if (window[vendor] === undefined) {
-                            opopMaps.prepLib.handleLoad(vendor);
+                        if (_0pop){
+                            return;
+                        } else if (window[vendor] === undefined) {
+                            console.log('handleload');
+                            opopGlobal.prepLib._handleLoad(vendor);
                         } else {
                             _0pop = window._; // Assign global underscore to _0pop
                         }
@@ -88,7 +240,7 @@ var opopMapVisualizations = (function(){
 
                 return;
             },
-            handleLoad : function(vendor){
+            _handleLoad : function(vendor){
                 vendorLibs[vendor].elem = document.createElement('script');
                 vendorLibs[vendor].elem.src = vendorLibs[vendor].source;
 
@@ -96,185 +248,59 @@ var opopMapVisualizations = (function(){
                     vendorLibs[vendor].elem.onreadystatechange = function () {
                         if (this.readyState == 'complete' || this.readyState == 'loaded') {
                             if (vendor != 'google.maps'){
-                                opopMaps.prepLib.loadSteps(vendor);
+                                opopGlobal.prepLib._loadSteps(vendor);
                             }
                         }
                     };
                 } else { // Other browsers
                     if (vendor != 'google.maps'){
                         vendorLibs[vendor].elem.onload = function(){
-                            opopMaps.prepLib.loadSteps(vendor);
+                            opopGlobal.prepLib._loadSteps(vendor);
                         }
                     }
                 }
 
                 (bodyHead).appendChild(vendorLibs[vendor].elem);
             },
-            loadSteps : function(vendor){
+            _loadSteps : function(vendor){
                 switch(vendor){
-                    case '_':
-                        _0pop = _.noConflict();
-                        console.log('_.noconf:', _0pop.VERSION);
-                    break;
-
                     case 'jQuery':
                         $0pop = window.jQuery.noConflict(true);
                         console.log($0pop.fn.jquery);
                     break;
 
+                    case '_':
+                        _0pop = _.noConflict();
+                        console.log('_.noconf:', _0pop.VERSION);
+                        opopGlobal.general.buildWidget(opopVisualWidgets);
+                    break;
+
                     case 'RichMarker':
-                        opopMaps.mapManager.pullFeed();
+                        opopGlobal.general._pullFeed(opopMapInfo, 1);
+                    break;
+
+                    case 'owlCarousel':
+                        opopGlobal.general._pullFeed(opopCarouselInfo, 1);
                     break;
                 }
 
                 return;
+            },
+            _loadCSS : function(vendor){
+                var link = document.createElement('link');
+
+                link.rel = 'stylesheet';
+                link.href = vendorLibs[vendor].css;
+                bodyHead.appendChild(link);
             }
         };
 
-        opopMaps.mapManager = {
-            init : function(){
-                opopMaps.prepLib.parseLib('_');
-                opopMaps.prepLib.parseLib('jQuery');
-                opopMaps.prepLib.parseLib('google.maps');
-            },
-            configureMap : function(){
-                var mapOptions = {
-                    zoom : (opopMapInfo.zoom || opopMaps.defaults.map.zoom) // Set zoom level of map
-                    ,center : new google.maps.LatLng(opopMapInfo.center.lat, opopMapInfo.center.long) // Set center of map
-                    ,minZoom : 2
-                }
-
-                googleMap = new google.maps.Map(document.getElementById('map-canvas-0pop'), mapOptions);
-                opopMaps.prepLib.parseLib('RichMarker');
-
-                // opopMaps.modal.load_Temp();
-                opopMaps.modal.pinModalEvents();
-            },
-            pullFeed : function(){
-                var baseURL = 'https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/script/response.json' // API Endpoint
-
-                var ajax = $0pop.getJSON(baseURL,{ get_param: 'value' }, function(data) {
-                    console.log(data);
-                    opopMaps.mapManager.storeUGC(data);
-
-                    if (ugcStorage['item1']){
-                        var first = ugcStorage['item1']
-                            ,coord = new google.maps.LatLng(first.latitude, first.longitude);
-
-                            googleMap.panTo(coord);
-                    }
-
-                });
-
-
-                ajax.complete(function(){
-                      /*
-                       * On complete, enable heat if client enabled in opopMapInfo
-                       * Default value is false
-                       *
-                       */
-                        var heatEnabled = (opopMapInfo.heat || opopMaps.defaults.heat.enabled)
-
-                        if (heatEnabled) opopMaps.addons.heatMap();
-                        console.log(ugcStorage);
-
-                        return;
-                });
-
-            },
-            storeUGC : function(data){
-            // console.log(data);
-
-                for (var i in data){
-                    // console.log(data[i])
-                    var content         = data[i].content
-                        ,platform_data  = content.platform_data
-                        ,geo_data       = platform_data.geo_data
-                        ,images         = content.media.media_urls
-                        ,network        = content.social_platform;
-
-                    // console.log(geo_data);
-
-                    // Store necessary UGC data into geoStore object
-                    var newUGC = {
-                                author          : content.author.username
-                                ,avatar         : content.author.profile.avatar
-                                ,caption        : content.text
-                                ,latitude       : geo_data.coordinates.latitude
-                                ,longitude      : geo_data.coordinates.longitude
-                                ,large_image    : images.large_image
-                                ,network        : network
-                                ,timestamp      : new Date(content.created_on).toDateString()
-                                ,platform_link  : platform_data.social_platform_original_url
-                    }
-
-                    // If twitter, store the tweet #
-                    if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
-                    // Twitter desktop stores location as Polygon; Store first polygon value
-                    if (geo_data.coordinates['0']){
-                        newUGC.latitude = geo_data.coordinates['0'].latitude;
-                        newUGC.longitude = geo_data.coordinates['0'].longitude;
-                    }
-
-                    // Store geo data in global array
-                    ugcStorage['item' + ugcCounter] = newUGC; // Store obj in global repo
-                    // Store geo data in heatMap array
-                    heatData.push(new google.maps.LatLng(newUGC.latitude, newUGC.longitude));
-
-                    // Create marker with data
-                    opopMaps.mapManager.createMarker(newUGC);
-                    ugcCounter++;
-                }
-            },
-            createMarker : function(data){
-            // create variable with path to geo data
-            var geo = new google.maps.LatLng(data.latitude, data.longitude)
-                // console.log('data');
-                // console.log(data);
-                var cMarker = new RichMarker({
-                    position: geo,
-                    map: googleMap,
-                    content: '<div class="ugc-content-0pop" id="item' + ugcCounter + '"></div>'
-                });
-
-              cMarker.setMap(googleMap); // Set RichMarker with UGC
-            }
-
-        };
-
-        opopMaps.modal = {
-            load_Temp : function(data){
-                _ModalHTML = render('modal-temp-0pop', data);
-
-                function render(tmpl_name, tmpl_data) {
-                    if (!tmpl_cache[tmpl_name]){
-                        console.log('loading temp');
-                        var tmpl_url = 'https://s3.amazonaws.com/assets.offerpop.com/roblum/noconflict/' + tmpl_name + '.html'
-                            ,tmpl_html;
-
-                        $0pop.ajax({
-                            url: tmpl_url,
-                            method: 'GET',
-                            async: false,
-                            success: function(data){
-                                tmpl_html = data;
-                                console.log(data);
-                            }
-                        });
-
-                        tmpl_cache[tmpl_name] = _0pop.template(tmpl_html);
-                    }
-
-                    return tmpl_cache[tmpl_name](tmpl_data);
-                };
-                // console.log(_ModalHTML);
-
-                opopMaps.modal.populateModal(_ModalHTML);
-            },
-            pinModalEvents : function(){
-                $0popCanvas     = $0pop('#map-canvas-0pop')
-                $0popFadeBG     = $0pop('#fade-bg-0pop')
-                ugcPins         = '.ugc-content-0pop';
+        opopGlobal.modal = {
+            _pinModalEvents : function(){ // Refactor this section
+                $0popCanvas     = $0pop('#map-canvas-0pop') // Declared in global
+                $0popFadeBG     = $0pop('#fade-bg-0pop') // Declared in global
+                $0popCarousel   = $0pop('#carousel-0pop');
+                ugcPins         = '.ugc-content-0pop'; // Declared in global
 
                     /* BRING THUMBNAIL TO TOP */
                     $0popCanvas.on({
@@ -294,25 +320,115 @@ var opopMapVisualizations = (function(){
                     $0popCanvas.on('click', ugcPins, function(){
                         var current = this.id;
 
-                        currentItem = ugcStorage[current];
-                        opopMaps.modal.load_Temp(currentItem);
+                        currentItem = ugcStorage.map[current];
+                        var template = opopGlobal.general._load_Temp('modal', currentItem);
+
+                        opopGlobal.modal._populateModal(template);
                     }); // Returns id of UGC content container when clicked
+
+                    $0popCarousel.on('click', '.lazyOwl', function(){
+                        var current = this.id;
+
+                        currentItem = ugcStorage.carousel[current];
+                        var template = opopGlobal.general._load_Temp('modal', currentItem);
+
+                        opopGlobal.modal._populateModal(template);
+                    });
 
                     /*********************************************************************/
                     /* Will eventually need to move this when implementing other widgets */
                     $0popFadeBG.on('click', '.modal-close-0pop', function(){
                         $0pop('#fade-bg-0pop').fadeOut();
+                        $0pop('body').css('overflow', 'auto');
+
+                        $0popCarousel.trigger('owl.play', 2000); // Need to revise... figure a more dynamic solution
                     }); // Close Modal
             },
-            populateModal : function(generated){
+            _populateModal : function(generated){
                 $0popFadeBG.empty();
                 $0popFadeBG.append(generated);
 
+                $0pop('body').css('overflow', 'hidden');
                 $0popFadeBG.fadeIn(); // Reveal Modal
             }
         };
 
-        opopMaps.addons = {
+        mapManager = {
+            init : function(){
+                // opopGlobal.prepLib._parseLib('jQuery');
+                //     opopGlobal.prepLib._parseLib('_');
+                opopGlobal.prepLib._parseLib('google.maps');
+            },
+            configureMap : function(){
+                var mapOptions = {
+                    zoom : (opopMapInfo.zoom || opopGlobal.defaults.map.zoom) // Set zoom level of map
+                    ,center : new google.maps.LatLng(opopMapInfo.lat || opopGlobal.defaults.map.center.lat, opopMapInfo.long || opopGlobal.defaults.map.center.long)
+                    // Set center of map
+                    ,minZoom : 2
+                }
+
+                googleMap = new google.maps.Map(document.getElementById('map-canvas-0pop'), mapOptions);
+                opopGlobal.prepLib._parseLib('RichMarker');
+            },
+            _storeUGC : function(data){
+                for (var i in data){
+                    // console.log(data[i])
+                    var content         = data[i].content
+                        ,platform_data  = content.platform_data
+
+                        if (platform_data && content['media'] && platform_data['geo_data'] && platform_data['geo_data']['coordinates']){
+                            var geo_data        = platform_data.geo_data
+                                ,images         = content.media.media_urls
+                                ,network        = content.social_platform;
+
+                            // Store necessary UGC data into geoStore object
+                            var newUGC = {
+                                        author          : content.author.username
+                                        ,avatar         : content.author.profile.avatar
+                                        ,caption        : content.text
+                                        ,latitude       : geo_data.coordinates.latitude
+                                        ,longitude      : geo_data.coordinates.longitude
+                                        ,large_image    : images.large_image
+                                        ,network        : network
+                                        ,timestamp      : new Date(content.created_on).toDateString()
+                                        ,platform_link  : platform_data.social_platform_original_url
+                            }
+
+                            // If twitter, store the tweet #
+                            if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
+                            // Twitter desktop stores location as Polygon; Store first polygon value
+                            if (geo_data.coordinates['0']){
+                                newUGC.latitude = geo_data.coordinates['0'].latitude;
+                                newUGC.longitude = geo_data.coordinates['0'].longitude;
+                            }
+
+                            // Store geo data in global array
+                            ugcStorage.map['item' + ugcStorage.map.ugcCounter] = newUGC; // Store obj in global repo
+                            // Store geo data in heatMap array
+                            heatData.push(new google.maps.LatLng(newUGC.latitude, newUGC.longitude));
+
+                            // Create marker with data
+                            mapManager._createMarker(newUGC);
+                            ugcStorage.map.ugcCounter++;
+                        }
+                }
+            },
+            _createMarker : function(data){
+                    // create variable with path to geo data
+                    var geo = new google.maps.LatLng(data.latitude, data.longitude)
+
+                    var cMarker = new RichMarker({
+                        position: geo,
+                        map: googleMap,
+                        content: '<div class="ugc-content-0pop" id="item' + ugcStorage.map.ugcCounter + '"></div>'
+                    });
+
+                cMarker.setMap(googleMap); // Set RichMarker with UGC
+            }
+
+        };
+
+        mapManager.addons = {
             /*
              * Map Add-ons. These features will be optional.
              * Heatmap will be a configuration option.
@@ -321,24 +437,24 @@ var opopMapVisualizations = (function(){
              *
              * Possible add-ons: Customize heat colors/radius
              */
-            heatMap : function(){
+            _heatMap : function(){
                 var pointArray = new google.maps.MVCArray(heatData);
 
                 heatmap = new google.maps.visualization.HeatmapLayer({
                     data: pointArray
                 });
 
-                heatmap.set('radius', (opopMapInfo.radius || opopMaps.defaults.heat.radius));
-                heatmap.set('gradient', (opopMapInfo.gradient || opopMaps.defaults.heat.gradient));
+                heatmap.set('radius', (opopMapInfo.radius || opopGlobal.defaults.heat.radius));
+                heatmap.set('gradient', (opopMapInfo.gradient || opopGlobal.defaults.heat.gradient));
 
-                opopMaps.addons.toggleHeat(); // Toggles heatmap and ugc thumbnails
+                mapManager.addons._toggleHeat(); // Toggles heatmap and ugc thumbnails
             },
-            toggleHeat : function(){
+            _toggleHeat : function(){
                 google.maps.event.addListener(googleMap, 'zoom_changed', function() {
                     var current = googleMap.getZoom()
                         ,$0popUGC = $0pop('.ugc-content-0pop');
 
-                        if (current < (opopMapInfo.zoom || opopMaps.defaults.map.zoom)){
+                        if (current < (opopMapInfo.zoom || opopGlobal.defaults.map.zoom)){
                             $0popUGC.hide();
                             heatmap.setMap(googleMap);
                         } else {
@@ -350,9 +466,13 @@ var opopMapVisualizations = (function(){
             }
         };
 
-        opopMaps.defaults = {
+        opopGlobal.defaults = { // Will add carousel defaults here later
             map : {
                 zoom : 13
+                ,center: {
+                    lat: 40.7508095,
+                    long: -73.9887535
+                }
             },
             heat : {
                 enabled : false
@@ -370,10 +490,84 @@ var opopMapVisualizations = (function(){
             }
         };
 
-        opopMaps.mapManager.init(opopMapInfo);
+        owlCarousel = {
+            init : function(){
+                // opopGlobal.prepLib._parseLib('jQuery');
+                //     opopGlobal.prepLib._parseLib('_');
+                opopGlobal.prepLib._parseLib('owlCarousel');
+                opopGlobal.prepLib._loadCSS('owlCarousel');
+            },
+            _storeUGC : function(data){
+                for (var i in data){
+                    // console.log(data[i])
+                    var content         = data[i].content
+                        ,platform_data  = content.platform_data
+
+                        if (platform_data && content['media'] && content['media']['media_urls']){
+                            var images          = content.media.media_urls
+                                ,network        = content.social_platform;
+
+                            // Store necessary UGC data into geoStore object
+                            var newUGC = {
+                                        author          : content.author.username
+                                        ,avatar         : content.author.profile.avatar
+                                        ,caption        : content.text
+                                        ,large_image    : images.large_image
+                                        ,network        : network
+                                        ,timestamp      : new Date(content.created_on).toDateString()
+                                        ,platform_link  : platform_data.social_platform_original_url
+                                        ,ugcCounter     : ugcStorage.carousel.ugcCounter
+                            }
+
+                            // If twitter, store the tweet #
+                            if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
+
+                            // Store geo data in global array
+                            ugcStorage.carousel['item' + ugcStorage.carousel.ugcCounter] = newUGC; // Store obj in global repo
+
+                            currentItem = ugcStorage.carousel['item' + ugcStorage.carousel.ugcCounter];
+                            var template = opopGlobal.general._load_Temp('carousel', currentItem);
+
+                            $0pop(template).appendTo($0popCarousel);
+
+                        }
+                        ugcStorage.carousel.ugcCounter++;
+                }
+
+                // Create marker with data
+                owlCarousel._buildCarousel();
+                owlCarousel.setHeight();
+            },
+            _buildCarousel : function(){
+                // console.log(opopCarouselInfo.styles.items);
+                $0popCarousel.owlCarousel({
+                    // items               : opopCarouselInfo.styles.items || 5,
+                    // itemsDesktop        : [1199, ( opopCarouselInfo.styles.items || 5 )],
+                    // itemsDesktopSmall   : [979, ( opopCarouselInfo.styles.itemsDesktopSm || 3 )],
+                    // itemsTablet         : [768, ( opopCarouselInfo.styles.itemsTablet || 3 )],
+                    // itemsMobile         : [479, ( opopCarouselInfo.styles.itemsMobile || 1 )],
+                    lazyLoad            : opopCarouselInfo.lazy || true,
+                    navigation          : opopCarouselInfo.navigation || true,
+                    autoPlay            : true,
+                    rewindNav           : true,
+                    responsive          : true,
+                    afterUpdate         : owlCarousel.setHeight
+
+                });
+            },
+            setHeight : function(){
+                var width = $0pop('.lazyOwl').css('width');
+                    $0pop('.lazyOwl').css('height', width);
+            }
+        };
+
+        opopGlobal.general.loadDependencies();
 
         return {
-            configureMap : opopMaps.mapManager.configureMap
+                configureMap    : mapManager.configureMap,
+                build           : opopGlobal.general.buildWidget,
+                initMap         : mapManager.init,
+                initOwl         : owlCarousel.init
             // configureMap is returned to global scope so gmaps callback will fire
         }
 
