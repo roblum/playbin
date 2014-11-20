@@ -4,16 +4,18 @@
 <head>
     <title></title>
     <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
 
     <div id="map-canvas-0pop"></div>
-    <div id="carousel-0pop" class="responsive-carousel-0pop"></div>
+    <div id="carousel-0pop" class="res-carousel-0pop"></div>
+    <div id="carousel-0pop" class="res-carousel-0pop"></div>
     <div id="fade-bg-0pop"></div>
 
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script> -->
 
     <!-- <script>
     if (window._) {
@@ -22,31 +24,24 @@
     </script> -->
 
     <script type="text/javascript">
-    opopMapInfo = {
-        type: 'map',
-        campaignId: 6900,
-        access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
-        heat: true
-    };
+    var widgets0pop = {};
+        widgets0pop.opopMapInfo = {
+            type: 'mapManager',
+            campaignId: 6900,
+            access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
+            heat: true
+        };
 
-    opopCarouselInfo = {
-        type: 'carousel',
-        campaignId: 6900,
-        access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
-        styles: {}
-    }
+        widgets0pop.opopCarouselInfo = {
+            type: 'carouselManager',
+            campaignId: 6900,
+            access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
+        }
 
     var e = document.createElement('script');
     e.src = 'https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/js/visualizationSdk.js';
     e.async = true;
     document.body.appendChild(e);
-
-    e.onload = function(){
-        opopVisualWidgets = [
-            opopVisual.initMap,
-            opopVisual.initOwl
-            ];
-    }
     </script>
 </body>
 
