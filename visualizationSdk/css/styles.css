@@ -21,33 +21,33 @@ html, body{
 
 /****************/
 /* CAROUSEL CSS */
-#carousel-0pop .item{
+.res-carousel-0pop .item{
   margin: 3px;
 }
-#carousel-0pop .item img{
+.res-carousel-0pop .item img{
   display: block;
   width: 100%;
   height: auto;
 }
-#carousel-0pop img{
+.res-carousel-0pop img{
     cursor: pointer;
 }
         /*Testing slider*/
-        #carousel-0pop .lazyOwl {
+        .res-carousel-0pop .lazyOwl {
             width:100%;
             height:290px;
             background-size: cover;
             cursor: pointer;
         }
-        #carousel-0pop .social-slider-0pop.twitter-0pop {
+        .res-carousel-0pop .social-slider-0pop.twitter-0pop {
             background: #18abdd url('https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/images/twitter_logo_large.png') no-repeat;
             background-position: 10px;
         }
-        #carousel-0pop .social-slider-0pop.instagram-0pop {
+        .res-carousel-0pop .social-slider-0pop.instagram-0pop {
             background: #808080 url('https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/images/instagram_logo_large.png') no-repeat;
             background-position: 10px;
         }
-        #carousel-0pop .social-slider-0pop {
+        .res-carousel-0pop .social-slider-0pop {
             position: absolute;
             width: 55px;
             height: 51px;
@@ -59,28 +59,22 @@ html, body{
             bottom: 10px;
         }
 
-#carousel-0pop .owl-pagination{
+.res-carousel-0pop .owl-pagination{
     display:none;
 }
-#carousel-0pop .owl-prev {
+.res-carousel-0pop.owl-carousel .owl-buttons .owl-prev, .res-carousel-0pop.owl-carousel .owl-buttons .owl-next{
     position: absolute;
     top: 40%;
-    left: 0;
-    opacity: 0.7;
-    opacity: 0.7;
-    height: 10%;
+    opacity: 0.5;
     border-radius: 0;
-    padding-top: 10%;
+    padding: 10px;
+    font-size:25px;
 }
-#carousel-0pop .owl-next {
-    position: absolute;
-    top: 40%;
+.res-carousel-0pop.owl-carousel .owl-buttons .owl-prev {
+    left: 0;
+}
+.res-carousel-0pop.owl-carousel .owl-buttons .owl-next {
     right: 0;
-    opacity: 0.7;
-    opacity: 0.7;
-    height: 10%;
-    border-radius: 0;
-    padding-top: 10%;
 }
 
 /*************/
