@@ -10,11 +10,13 @@
 <body>
 
     <div id="map-canvas-0pop"></div>
-    <div id="carousel-0pop" class="res-carousel-0pop"></div>
-    <div id="carousel-0pop" class="res-carousel-0pop"></div>
-    <div id="fade-bg-0pop"></div>
+    <div id="carousel-0pop1" class="res-carousel-0pop"></div>
+    <!-- <div id="carousel-0pop2" class="res-carousel-0pop"></div> -->
+    <!-- <div id="carousel-0pop3" class="res-carousel-0pop"></div> -->
+    <!-- <div id="carousel-0pop4" class="res-carousel-0pop"></div> -->
+    <div id="grid-0pop"></div>
 
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script> -->
 
     <!-- <script>
@@ -24,7 +26,7 @@
     </script> -->
 
     <script type="text/javascript">
-    var widgets0pop = {};
+        widgets0pop = {};
         widgets0pop.opopMapInfo = {
             type: 'mapManager',
             campaignId: 6900,
@@ -34,8 +36,17 @@
 
         widgets0pop.opopCarouselInfo = {
             type: 'carouselManager',
+            campaignId: 7464,
+            access_token: 'SBfVS2fsEVCoqUlYhMlbqpb6DYQel0',
+        }
+
+        widgets0pop.opopGridInfo = {
+            type: 'gridManager',
             campaignId: 6900,
             access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
+            rows: 3,
+            columns: 5,
+            order: 'random_sort'
         }
 
     var e = document.createElement('script');
