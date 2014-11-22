@@ -7,7 +7,7 @@ html, body{
 /***********/
 /* MAP CSS */
 #map-canvas-0pop {
-    height: 500px;
+    height: 400px;
     width: 100%;
     margin: 0;
     padding: 0;
@@ -75,6 +75,19 @@ html, body{
 }
 .res-carousel-0pop.owl-carousel .owl-buttons .owl-next {
     right: 0;
+}
+
+/************/
+/* GRID CSS */
+.gutter-sizer-0pop{
+    width: 1%;
+}
+.grid-item-0pop{
+    overflow: hidden;
+}
+.grid-item-0pop img{
+    width:100%;
+    cursor: pointer;
 }
 
 /*************/
