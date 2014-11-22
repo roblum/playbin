@@ -225,7 +225,7 @@ var opopVisual = (function(){
                         opopGlobal.carouselManager._pullFeed(1);
                     break;
 
-                    case 'imagesLoaded':
+                    case 'masonry':
                         opopGlobal.gridManager._pullFeed(1);
                     break;
                 }
@@ -540,8 +540,8 @@ var opopVisual = (function(){
 
         opopGlobal.gridManager = {
             _init : function(){
-                opopGlobal.prepLib._parseLib('masonry');
                 opopGlobal.prepLib._parseLib('imagesLoaded');
+                opopGlobal.prepLib._parseLib('masonry');
 
                 $0pop('#' + gridSelector).append('<div class="' + gutterSizer + '"></div>');
             },
