@@ -14,35 +14,32 @@ var opopVisual = (function(){
     var opopGlobal = {}
         ,bodyHead = document.querySelector('head') || document.querySelector('body');
 
-    /* Local Library Vars */
-    var _0pop;          // private underscore
-
-    /* UGC Vars */
-    var ugcStorage = {
-        map : {ugcCounter : 1}
-        ,carousel : {ugcCounter : 1}
+    var _0pop;                              // Local Underscore
+    var ugcStorage = {                      // UGC Vars
+        map         : {ugcCounter : 1}
+        ,carousel   : {ugcCounter : 1}
+        ,grid       : {ugcCounter : 1}
     };
 
-    /* Map Vars */
-    var googleMap
-        ,heatData = []
-        ,heatmap;
-
-    /* Carousel Vars */
-    var $0popCarousel;
-
-    /* Modal Vars */
-    var _ModalHTML      // Underscore template - pulled in through ajax
-        ,$0popCanvas    // $0pop('#map-canvas-0pop')
-        ,$0popFadeBG    // $0pop('#fade-bg-0pop')
-        ,ugcPins        // '.ugc-content-0pop';
+    var googleMap                           // Map Vars
+        ,ugcPins                            // Map Vars '.ugc-content-0pop';
+        ,heatData = []                      // Map Vars
+        ,heatmap;                           // Map Vars
+    var $0popCarousel;                      // Carousel Vars
+    var $0popGrid                           // Grid Vars
+        ,gridSelector = 'grid-0pop'         // Grid Vars
+        ,gutterSizer  = 'gutter-sizer-0pop' // Grid Vars
+        ,gridItem     = 'grid-item-0pop'    // Grid Vars
+    var _ModalHTML                          // Modal Vars - Underscore template - pulled in through ajax
+        ,$0popCanvas                        // $0pop('#map-canvas-0pop')
+        ,$0popFadeBG                        // $0pop('#fade-bg-0pop')
         ,tmpl_cache = {};
 
-    /* Default-User Settings */
-    var nowidget = {};
-    var userMap         = (widgets0pop.opopMapInfo) ? widgets0pop.opopMapInfo : nowidget
-        ,userCarousel   = (widgets0pop.opopCarouselInfo) ? widgets0pop.opopCarouselInfo : nowidget
-        ,opopVisualWidgets = []; // Widgets to build
+    var nowidget = {};                  /* Default-User Settings */
+    var userMap             = (widgets0pop.opopMapInfo) ? widgets0pop.opopMapInfo : nowidget
+        ,userCarousel       = (widgets0pop.opopCarouselInfo) ? widgets0pop.opopCarouselInfo : nowidget
+        ,userGrid           = (widgets0pop.opopGridInfo) ? widgets0pop.opopGridInfo : nowidget
+        ,opopVisualWidgets  = [];       // Widgets to build
 
 
     var filesDir = 'https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/';
@@ -65,11 +62,20 @@ var opopVisual = (function(){
             source : filesDir + 'libs/owlCarousel.js'
             ,css : filesDir + 'libs/owlCarousel.css'
         },
+        'masonry' : {
+            source : filesDir + 'libs/masonry.js'
+        },
+        'imagesLoaded' : {
+            source : filesDir + 'libs/imagesLoaded.js'
+        },
         'modalTemplate' : {
             source : filesDir + 'modal-temp-0pop.html'
         },
         'carouselTemplate' : {
             source : filesDir + 'carousel-temp-0pop.html'
+        },
+        'gridTemplate' : {
+            source : filesDir + 'grid-temp-0pop.html'
         },
         'visualization-styles' : {
             css : filesDir  + 'css/styles.css'
@@ -78,6 +84,12 @@ var opopVisual = (function(){
 
         opopGlobal.general = {
                 _loadDependencies : function(){
+                    var fadeBg      = document.createElement('div')
+                        ,body       = document.querySelector('body');                        
+                        
+                        fadeBg.id   = 'fade-bg-0pop';
+                        body.appendChild(fadeBg);
+                        
                         opopGlobal.prepLib._parseLib('_');
                         opopGlobal.prepLib._parseLib('jQuery');
                         opopGlobal.prepLib._loadCSS('visualization-styles');
@@ -116,84 +128,30 @@ var opopVisual = (function(){
                     // console.log(_ModalHTML);
                     return _ModalHTML;
                 },
-                _pullFeed : function(widget, page){
+                _xhr : function(widget, page){
                     var baseURL             = 'https://api.offerpop.com/v1/ugc/collections/' // API Endpoint
                         ,campaign           = widget.campaignId
                         ,access_token       = widget.access_token
-                        ,page_size          = widget.page_size || 100
-                        ,approval_status    = widget.approval || 'app'
-                        ,social_platform    = widget.platform || 'twitter%2Cinstagram'
-                        ,media_type         = widget.media_type || 'video%2Cimage'
-                        ,order              = widget.order || 'date_asc'
+                        ,page_size          = widget.page_size      || 100
+                        ,approval_status    = widget.approval       || 'app'
+                        ,social_platform    = widget.platform       || 'twitter%2Cinstagram'
+                        ,media_type         = widget.media_type     || 'video%2Cimage'
+                        ,order              = widget.order          || 'date_asc'
                         ,next               = false;
 
-                            console.log(widget);
-                        var widgetType = widget.type;
-                        console.log(widgetType);
-
-                        var ajax = $0pop.getJSON(
-                                    baseURL +
-                                    campaign +
-                                    '/?access_token='   + access_token +
-                                    '&page='            + page + // passed in as a parameter
-                                    '&approval_status=' + approval_status +
-                                    '&page_size='       + page_size +
-                                    '&social_platform=' + social_platform +
-                                    '&order='           + order +
-                                    '&media_type='      + media_type
-
-                        ,{ get_param: 'value' }, function(data) {
-                        console.log(data);
-
-                        var ugcItems = data['_embedded']['ugc:item'];
-
-                        switch(widgetType){
-                            case 'mapManager':
-                                opopGlobal.mapManager._storeUGC(ugcItems);
-                                opopGlobal.modal._pinModalEvents();
-
-                                if (data['_links'].next.href) {
-                                    var nextUrl     = data['_links'].next.href
-                                        ,pageIndex  = nextUrl.indexOf('&page=')
-                                        ,nextPage   = nextUrl.slice(pageIndex + 6, nextUrl.length);
-
-                                        console.log(nextPage);
-                                        opopGlobal.general._pullFeed(userMap, nextPage);
-
-                                }
-
-                                if (ugcStorage.map['item1']){
-                                    var first = ugcStorage.map['item1']
-                                        ,coord = new google.maps.LatLng(first.latitude, first.longitude);
-
-                                        googleMap.panTo(coord);
-                                }
-                            break;
-
-                            case 'carouselManager':
-                                opopGlobal.modal._pinModalEvents();
-                                opopGlobal.carouselManager._storeUGC(ugcItems);
-                            break;
-
-                        }
-
-                    });
-
-
-                    ajax.complete(function(){
-                          /*
-                           * On complete, enable heat if client enabled in opopMapInfo
-                           * Default value is false
-                           *
-                           */
-                            if (widgetType === 'mapManager'){
-                                if (opopGlobal.defaults.heat.enabled) opopGlobal.mapManager.addons._heatMap();
-                            }
-                            console.log(ugcStorage);
-
-                            opopGlobal.general._buildWidget(opopVisualWidgets)
-                            return;
-                    });
+                        return $0pop.ajax({
+                                    type        : 'GET',
+                                    dataType    : 'json',
+                                    url         :   baseURL +
+                                                    campaign +
+                                                    '/?access_token='   + access_token +
+                                                    '&page='            + page + // passed in as a parameter
+                                                    '&approval_status=' + approval_status +
+                                                    '&page_size='       + page_size +
+                                                    '&social_platform=' + social_platform +
+                                                    '&order='           + order +
+                                                    '&media_type='      + media_type
+                        });
 
                 },
         };
@@ -208,8 +166,8 @@ var opopVisual = (function(){
              *
              */
             _parseLib : function(vendor){
-                var prepLib = opopGlobal.prepLib
-                    ,detector = (vendor === '_') ? prepLib._noConflict : prepLib._handleLoad;
+                var prepLib     = opopGlobal.prepLib
+                    ,detector   = (vendor === '_') ? prepLib._noConflict : prepLib._handleLoad;
 
                     detector(vendor);
             },
@@ -260,22 +218,25 @@ var opopVisual = (function(){
                     break;
 
                     case 'RichMarker':
-                        opopGlobal.general._pullFeed(userMap, 1);
+                        opopGlobal.mapManager._pullFeed(1);
                     break;
 
                     case 'owlCarousel':
-                        opopGlobal.general._pullFeed(userCarousel, 1);
+                        opopGlobal.carouselManager._pullFeed(1);
+                    break;
+
+                    case 'imagesLoaded':
+                        opopGlobal.gridManager._pullFeed(1);
                     break;
                 }
 
                 return;
             },
             _loadCSS : function(vendor){
-                var link = document.createElement('link');
-
-                link.rel = 'stylesheet';
-                link.href = vendorLibs[vendor].css;
-                bodyHead.appendChild(link);
+                var link        = document.createElement('link');
+                    link.rel    = 'stylesheet';
+                    link.href   = vendorLibs[vendor].css;
+                    bodyHead.appendChild(link);
             }
         };
 
@@ -284,6 +245,7 @@ var opopVisual = (function(){
                 $0popCanvas     = $0pop('#map-canvas-0pop') // Declared in global
                 $0popFadeBG     = $0pop('#fade-bg-0pop') // Declared in global
                 $0popCarousel   = $0pop('.res-carousel-0pop');
+                $0popGrid       = $0pop('#' + gridSelector)
                 ugcPins         = '.ugc-content-0pop'; // Declared in global
 
                     /* BRING THUMBNAIL TO TOP */
@@ -302,27 +264,29 @@ var opopVisual = (function(){
                     }, ugcPins); // Bring thumbnail to front if mouseover
 
                     $0popCanvas.on('click', ugcPins, function(){
-                        var current = this.id;
-
-                        currentItem = ugcStorage.map[current];
-                        var template = opopGlobal.general._load_Temp('modal', currentItem);
-
-                        opopGlobal.modal._populateModal(template);
+                        fetchTemp(this, 'map');
                     }); // Returns id of UGC content container when clicked
 
                     $0popCarousel.on('click', '.lazyOwl', function(){
-                        var current = this.id;
-
-                        currentItem = ugcStorage.carousel[current];
-                        var template = opopGlobal.general._load_Temp('modal', currentItem);
-
-                        opopGlobal.modal._populateModal(template);
+                        fetchTemp(this, 'carousel');
                     });
+
+                    $0popGrid.on('click', '.' + gridItem, function(){
+                        fetchTemp(this, 'grid');
+                    });
+
+                        function fetchTemp(self, widget){
+                            var current     = self.id;
+                                currentItem = ugcStorage[widget][current];
+                            var template    = opopGlobal.general._load_Temp('modal', currentItem);
+
+                            opopGlobal.modal._populateModal(template);
+                        }
 
                     /*********************************************************************/
                     /* Will eventually need to move this when implementing other widgets */
                     $0popFadeBG.on('click', '.modal-close-0pop', function(){
-                        $0pop('#fade-bg-0pop').fadeOut();
+                        $0popFadeBG.fadeOut();
                         $0pop('body').css('overflow', 'auto');
 
                         $0popCarousel.trigger('owl.play', 2000); // Need to revise... figure a more dynamic solution
@@ -343,13 +307,45 @@ var opopVisual = (function(){
             },
             configureMap : function(){
                 var mapOptions = {
-                    zoom : opopGlobal.defaults.map.zoom // Set zoom level of map
-                    ,center : new google.maps.LatLng(opopGlobal.defaults.map.center.lat, opopGlobal.defaults.map.center.long)
-                    ,minZoom : 2
+                    zoom        : opopGlobal.defaults.map.zoom // Set zoom level of map
+                    ,center     : new google.maps.LatLng(opopGlobal.defaults.map.center.lat, opopGlobal.defaults.map.center.long)
+                    ,minZoom    : 2
                 }
 
                 googleMap = new google.maps.Map(document.getElementById('map-canvas-0pop'), mapOptions);
                 opopGlobal.prepLib._parseLib('RichMarker');
+            },
+            _pullFeed : function(page){
+                    opopGlobal.general._xhr(userMap, page)
+                        .done(function(data) {
+                            var ugcItems = data['_embedded']['ugc:item'];
+
+                                opopGlobal.modal._pinModalEvents(); // Move to dependencies?
+                                opopGlobal.mapManager._storeUGC(ugcItems);
+
+                                if (data['_links'].next.href) {
+                                    var nextUrl     = data['_links'].next.href
+                                        ,pageIndex  = nextUrl.indexOf('&page=')
+                                        ,nextPage   = nextUrl.slice(pageIndex + 6, nextUrl.length);
+
+                                        console.log(nextPage);
+                                        opopGlobal.mapManager._pullFeed(nextPage);
+
+                                } else {
+                                    if (ugcStorage.map['item1']){
+                                        var first = ugcStorage.map['item1']
+                                            ,coord = new google.maps.LatLng(first.latitude, first.longitude);
+
+                                            googleMap.panTo(coord);
+                                    }
+
+                                    if (opopGlobal.defaults.heat.enabled) opopGlobal.mapManager.addons._heatMap();
+
+                                    opopGlobal.general._buildWidget(opopVisualWidgets);
+                                }
+
+                        });
+
             },
             _storeUGC : function(data){ // Refactor !!! ?!? waiting for geo enabled in CAPI
                 for (var i in data){
@@ -379,8 +375,8 @@ var opopVisual = (function(){
                             if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
                             // Twitter desktop stores location as Polygon; Store first polygon value
                             if (geo_data.coordinates['0']){
-                                newUGC.latitude = geo_data.coordinates['0'].latitude;
-                                newUGC.longitude = geo_data.coordinates['0'].longitude;
+                                newUGC.latitude     = geo_data.coordinates['0'].latitude;
+                                newUGC.longitude    = geo_data.coordinates['0'].longitude;
                             }
 
                             // Store geo data in global array
@@ -432,8 +428,8 @@ var opopVisual = (function(){
             },
             _toggleHeat : function(){
                 google.maps.event.addListener(googleMap, 'zoom_changed', function() {
-                    var current = googleMap.getZoom()
-                        ,$0popUGC = $0pop('.ugc-content-0pop');
+                    var current     = googleMap.getZoom()
+                        ,$0popUGC   = $0pop('.ugc-content-0pop');
 
                         if (current < opopGlobal.defaults.map.zoom){
                             $0popUGC.hide();
@@ -451,6 +447,17 @@ var opopVisual = (function(){
             _init : function(){
                 opopGlobal.prepLib._parseLib('owlCarousel');
                 opopGlobal.prepLib._loadCSS('owlCarousel');
+            },
+            _pullFeed : function(page){
+                    opopGlobal.general._xhr(userCarousel, page)
+                        .done(function(data) {
+                            var ugcItems = data['_embedded']['ugc:item'];
+
+                                opopGlobal.modal._pinModalEvents(); // Move to dependencies?
+                                opopGlobal.carouselManager._storeUGC(ugcItems);
+
+                                opopGlobal.general._buildWidget(opopVisualWidgets);
+                        });
             },
             _storeUGC : function(data){ // Refactor !!! ?!? waiting for geo enabled in CAPI
                 for (var i in data){
@@ -480,18 +487,30 @@ var opopVisual = (function(){
                             // Store geo data in global array
                             ugcStorage.carousel['item' + ugcStorage.carousel.ugcCounter] = newUGC; // Store obj in global repo
 
-                            currentItem = ugcStorage.carousel['item' + ugcStorage.carousel.ugcCounter];
-                            var template = opopGlobal.general._load_Temp('carousel', currentItem);
-
-                            $0pop(template).appendTo($0popCarousel);
-
                         }
                         ugcStorage.carousel.ugcCounter++;
                 }
 
+                var carouselAmt = $0pop('.res-carousel-0pop').length
+                    ,increment  = Math.floor(ugcStorage.carousel.ugcCounter / carouselAmt) // 50
+                    ,start      = 1
+                    ,end        = increment;
+
+                    for (var i = 1; i <= carouselAmt; i++){
+                        for (var j = start; j < end; j++){
+                                currentItem = ugcStorage.carousel['item' + j];
+                            
+                            var template = opopGlobal.general._load_Temp('carousel', currentItem);
+                            
+                                $0pop('#carousel-0pop' + i).append(template);
+                        }
+                        start += increment;
+                        end += increment + 1;
+                    }
+                    console.log(start);
+
                 // Create marker with data
                 opopGlobal.carouselManager._buildCarousel();
-
             },
             _buildCarousel : function(){
                 // console.log(opopCarouselInfo.styles.items);
@@ -519,18 +538,103 @@ var opopVisual = (function(){
             }
         };
 
+        opopGlobal.gridManager = {
+            _init : function(){
+                opopGlobal.prepLib._parseLib('masonry');
+                opopGlobal.prepLib._parseLib('imagesLoaded');
+
+                $0pop('#' + gridSelector).append('<div class="' + gutterSizer + '"></div>');
+            },
+            _pullFeed : function(page){
+                    opopGlobal.general._xhr(userGrid, page)
+                        .done(function(data) {
+                            var ugcItems = data['_embedded']['ugc:item'];
+
+                                opopGlobal.modal._pinModalEvents(); // Move to dependencies?
+                                opopGlobal.gridManager._storeUGC(ugcItems);
+
+                                opopGlobal.general._buildWidget(opopVisualWidgets);
+                        });
+            },
+            _storeUGC : function(data){ // Can consolidate this function with other _storeUGC functions. Will do later
+                    for (var i in data){
+                        // console.log(data[i])
+                        var content         = data[i].content
+                            ,platform_data  = content.platform_data
+
+                            if (platform_data && content['media'] && content['media']['media_urls']){
+                                var images          = content.media.media_urls
+                                    ,network        = content.social_platform;
+
+                                // Store necessary UGC data into geoStore object
+                                var newUGC = {
+                                            author          : content.author.username
+                                            ,avatar         : content.author.profile.avatar
+                                            ,caption        : content.text
+                                            ,large_image    : images.large_image
+                                            ,network        : network
+                                            ,timestamp      : new Date(content.created_on).toDateString()
+                                            ,platform_link  : platform_data.social_platform_original_url
+                                            ,ugcCounter     : ugcStorage.grid.ugcCounter
+                                }
+
+                                // If twitter, store the tweet #
+                                if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
+
+                                // Store geo data in global array
+                                ugcStorage.grid['item' + ugcStorage.grid.ugcCounter] = newUGC; // Store obj in global repo
+
+                                currentItem = ugcStorage.grid['item' + ugcStorage.grid.ugcCounter];
+
+                                var area = opopGlobal.defaults.grid.rows * opopGlobal.defaults.grid.columns;
+                                    if (ugcStorage.grid.ugcCounter <= area){
+                                        var template = opopGlobal.general._load_Temp('grid', currentItem);
+                                            $0pop(template).appendTo($0popGrid);
+                                    } else if (ugcStorage.grid.ugcCounter === area + 1){
+                                            opopGlobal.gridManager._buildGrid();
+                                    }
+
+                        }
+                        ugcStorage.grid.ugcCounter++
+                    }
+            },
+            _buildGrid : function(){
+                    var getGutterPx         = $0pop('.' + gutterSizer).width()
+                        ,getContainerPx     = $0popGrid.width()
+                        ,gutters            = opopGlobal.defaults.grid.columns - 1
+                        ,gutterSpace        = Math.round((getGutterPx * 100)/getContainerPx) // Calculate the gutterspace in %
+                        ,gutterTotal        = gutters * gutterSpace // gutter-sizer is 1% by default
+                        ,tileWidth          = (100 - gutterTotal) / opopGlobal.defaults.grid.columns;
+
+                        $0pop('.' + gridItem).css('width', tileWidth + '%');
+
+                    var gridContainer       = document.querySelector('#' + gridSelector);
+                    var msnry               = new Masonry( gridContainer, {
+                                                columnWidth        : 0,
+                                                gutter             : '.' + gutterSizer, // Referenced at top
+                                                itemSelector       : '.' + gridItem
+                    });
+
+                    // layout Masonry again after all images have loaded
+                    imagesLoaded( gridContainer, function() {
+                         msnry.layout();
+                    });
+
+            }
+        };
+
         opopGlobal.defaults = { // Will add carousel defaults here later
             map : {
-                zoom        : userMap.zoom || 13,
+                zoom        : userMap.zoom      || 13,
                 center : {
-                    lat     : userMap.lat || 40.7508095,
-                    long    : userMap.long || -73.9887535
+                    lat     : userMap.lat       || 40.7508095,
+                    long    : userMap.long      || -73.9887535
                 }
             },
             heat : {
-                enabled     : userMap.heat || false,
-                radius      : userMap.radius || 20,
-                gradient    : userMap.gradient ||
+                enabled     : userMap.heat      || false,
+                radius      : userMap.radius    || 20,
+                gradient    : userMap.gradient  ||
                                 [
                                     'rgba(0, 255, 255, 0)',
                                     'rgba(0, 255, 255, 1)',
@@ -543,16 +647,20 @@ var opopVisual = (function(){
                                 ]
             },
             carousel : {
-                items               : userCarousel.items || 5,
-                itemsDesktop        : [1199, ( userCarousel.items || 5 )],
-                itemsDesktopSmall   : [979, ( userCarousel.itemsDesktopSm || 3 )],
-                itemsTablet         : [768, ( userCarousel.itemsTablet || 3 )],
-                itemsMobile         : [479, ( userCarousel.itemsMobile || 1 )],
-                lazyLoad            : userCarousel.lazy || true,
-                navigation          : userCarousel.navigation || true,
-                autoPlay            : userCarousel.autoPlay || true,
-                rewindNav           : userCarousel.rewindNav || true,
-                responsive          : userCarousel.responsive || true,
+                items               : userCarousel.items                    || 5,
+                itemsDesktop        : [1199, ( userCarousel.items           || 5 )],
+                itemsDesktopSmall   : [979, ( userCarousel.itemsDesktopSm   || 3 )],
+                itemsTablet         : [768, ( userCarousel.itemsTablet      || 3 )],
+                itemsMobile         : [479, ( userCarousel.itemsMobile      || 1 )],
+                lazyLoad            : userCarousel.lazy                     || true,
+                navigation          : userCarousel.navigation               || true,
+                autoPlay            : userCarousel.autoPlay                 || true,
+                rewindNav           : userCarousel.rewindNav                || true,
+                responsive          : userCarousel.responsive               || true,
+            },
+            grid : {
+                rows                : userGrid.rows     || 3,
+                columns             : userGrid.columns  || 5
             }
 
         };
