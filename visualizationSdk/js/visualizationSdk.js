@@ -6,15 +6,18 @@
  * Setting default values for:
  * Map - Zoom (13)
  * Heat - Color (blue-purple), radius (20)
+ * Globals to fix: currentItem, nextGridItem
+ * To do: Consolidate build objects into one..
  */
-var $0pop; // Public so we can pass to owlCarousel
 
 var opopVisual = (function(){
     /* General Vars */
     var opopGlobal = {}
         ,bodyHead = document.querySelector('head') || document.querySelector('body');
 
+    var $0pop;                              // Local jQuery
     var _0pop;                              // Local Underscore
+
     var ugcStorage = {                      // UGC Vars
         map         : {ugcCounter : 1}
         ,carousel   : {ugcCounter : 1}
@@ -27,6 +30,7 @@ var opopVisual = (function(){
         ,heatmap;                           // Map Vars
     var $0popCarousel;                      // Carousel Vars
     var $0popGrid                           // Grid Vars
+        ,nextGridItem                       // Grid Vars
         ,gridSelector = 'grid-0pop'         // Grid Vars
         ,gutterSizer  = 'gutter-sizer-0pop' // Grid Vars
         ,gridItem     = 'grid-item-0pop'    // Grid Vars
@@ -44,52 +48,50 @@ var opopVisual = (function(){
 
     var filesDir = 'https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/';
     var vendorLibs = {
-        'jQuery' : {
-            version : '1.11.0' // jquery version
-            ,source : 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' // CDN
+        'jQuery'                : {
+            source             : 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' // CDN
         },
-        '_' : {
-            version : '1.7.0'
-            ,source : filesDir + 'libs/underscore.1.7.0.min.js'
+        'google.maps'           : { // This runs a call back after load (configureMap); Gmaps doesnt allow dynamic insertion
+            source              : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopVisual.configureMap'
         },
-        'google.maps' : { // This runs a call back after load (configureMap); Gmaps doesnt allow dynamic insertion
-            source : 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization&callback=opopVisual.configureMap'
+        '_'                     : {
+            source             : filesDir + 'libs/underscore.1.7.0.min.js'
         },
-        'RichMarker' : {
-            source : filesDir + 'libs/rich-marker.js'
+        'RichMarker'            : {
+            source              : filesDir + 'libs/rich-marker.js'
         },
-        'owlCarousel' : {
-            source : filesDir + 'libs/owlCarousel.js'
-            ,css : filesDir + 'libs/owlCarousel.css'
+        'owlCarousel'           : {
+            source              : filesDir + 'libs/owlCarousel.js'
+            ,css                : filesDir + 'libs/owlCarousel.css'
         },
-        'masonry' : {
-            source : filesDir + 'libs/masonry.js'
+        'masonry'               : {
+            source              : filesDir + 'libs/masonry.js'
         },
-        'imagesLoaded' : {
-            source : filesDir + 'libs/imagesLoaded.js'
+        'imagesLoaded'          : {
+            source              : filesDir + 'libs/imagesLoaded.js'
         },
-        'modalTemplate' : {
-            source : filesDir + 'modal-temp-0pop.html'
+        'modalTemplate'         : {
+            source              : filesDir + 'modal-temp-0pop.html'
         },
-        'carouselTemplate' : {
-            source : filesDir + 'carousel-temp-0pop.html'
+        'carouselTemplate'      : {
+            source              : filesDir + 'carousel-temp-0pop.html'
         },
-        'gridTemplate' : {
-            source : filesDir + 'grid-temp-0pop.html'
+        'gridTemplate'          : {
+            source              : filesDir + 'grid-temp-0pop.html'
         },
-        'visualization-styles' : {
-            css : filesDir  + 'css/styles.css'
+        'visualization-styles'  : {
+            css                 : filesDir  + 'css/styles.css'
         }
     };
 
         opopGlobal.general = {
                 _loadDependencies : function(){
                     var fadeBg      = document.createElement('div')
-                        ,body       = document.querySelector('body');                        
-                        
+                        ,body       = document.querySelector('body');
+
                         fadeBg.id   = 'fade-bg-0pop';
                         body.appendChild(fadeBg);
-                        
+
                         opopGlobal.prepLib._parseLib('_');
                         opopGlobal.prepLib._parseLib('jQuery');
                         opopGlobal.prepLib._loadCSS('visualization-styles');
@@ -154,6 +156,44 @@ var opopVisual = (function(){
                         });
 
                 },
+                _ugcData : function(widget, content, platform_data){
+                        var images         = content.media.media_urls
+                            ,network        = content.social_platform;
+
+                        // Store necessary UGC data into geoStore object
+                        var newUGC = {
+                                    author          : content.author.username
+                                    ,avatar         : content.author.profile.avatar
+                                    ,caption        : content.text
+                                    ,medium_image   : images.medium_image
+                                    ,large_image    : images.large_image
+                                    ,network        : network
+                                    ,timestamp      : new Date(content.created_on).toDateString()
+                                    ,platform_link  : platform_data.social_platform_original_url
+                                    ,ugcCounter     : ugcStorage[widget].ugcCounter
+                        }
+
+                        // If twitter, store the tweet #
+                        if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
+
+                        if (widget === 'map'){
+                            var geo_data                = platform_data.geo_data
+                                // Twitter desktop stores location as Polygon; Store first polygon value
+                                if (geo_data.coordinates['0']){
+                                    newUGC.latitude     = geo_data.coordinates['0'].latitude;
+                                    newUGC.longitude    = geo_data.coordinates['0'].longitude;
+                                } else {
+                                    newUGC.latitude     = geo_data.coordinates.latitude
+                                    newUGC.longitude    = geo_data.coordinates.longitude
+                                }
+                        }
+                        // Store geo data in global array
+                        console.log(newUGC)
+                        console.log(widget);
+                        ugcStorage[widget]['item' + ugcStorage[widget].ugcCounter] = newUGC; // Store obj in global repo
+
+                        return newUGC;
+                }
         };
 
         opopGlobal.prepLib = {
@@ -222,6 +262,7 @@ var opopVisual = (function(){
                     break;
 
                     case 'owlCarousel':
+                        owlCarouselPrivate($0pop, window, document);
                         opopGlobal.carouselManager._pullFeed(1);
                     break;
 
@@ -289,7 +330,7 @@ var opopVisual = (function(){
                         $0popFadeBG.fadeOut();
                         $0pop('body').css('overflow', 'auto');
 
-                        $0popCarousel.trigger('owl.play', 2000); // Need to revise... figure a more dynamic solution
+                        $0popCarousel.trigger('owl.play', opopGlobal.defaults.carousel.autoPlay); // Need to revise... figure a more dynamic solution
                     }); // Close Modal
             },
             _populateModal : function(generated){
@@ -332,7 +373,7 @@ var opopVisual = (function(){
                                         opopGlobal.mapManager._pullFeed(nextPage);
 
                                 } else {
-                                    if (ugcStorage.map['item1']){
+                                    if (ugcStorage.map['item1'] && !userMap.lat){
                                         var first = ugcStorage.map['item1']
                                             ,coord = new google.maps.LatLng(first.latitude, first.longitude);
 
@@ -347,47 +388,22 @@ var opopVisual = (function(){
                         });
 
             },
-            _storeUGC : function(data){ // Refactor !!! ?!? waiting for geo enabled in CAPI
+            _storeUGC : function(data){
                 for (var i in data){
-                    // console.log(data[i])
-                    var content         = data[i].content
-                        ,platform_data  = content.platform_data
+                    if (!isNaN(i)){
+                        var content         = data[i].content
+                            ,platform_data  = content.platform_data
 
-                        if (platform_data && content['media'] && platform_data['geo_data'] && platform_data['geo_data']['coordinates']){
-                            var geo_data        = platform_data.geo_data
-                                ,images         = content.media.media_urls
-                                ,network        = content.social_platform;
+                            if (platform_data && content['media'] && platform_data['geo_data'] && platform_data['geo_data']['coordinates']){
+                                var newUGC = opopGlobal.general._ugcData('map', content, platform_data);
+                                // Store geo data in heatMap array
+                                heatData.push(new google.maps.LatLng(newUGC.latitude, newUGC.longitude));
 
-                            // Store necessary UGC data into geoStore object
-                            var newUGC = {
-                                        author          : content.author.username
-                                        ,avatar         : content.author.profile.avatar
-                                        ,caption        : content.text
-                                        ,latitude       : geo_data.coordinates.latitude
-                                        ,longitude      : geo_data.coordinates.longitude
-                                        ,large_image    : images.large_image
-                                        ,network        : network
-                                        ,timestamp      : new Date(content.created_on).toDateString()
-                                        ,platform_link  : platform_data.social_platform_original_url
+                                // Create marker with data
+                                opopGlobal.mapManager._createMarker(newUGC);
+                                ugcStorage.map.ugcCounter++;
                             }
-
-                            // If twitter, store the tweet #
-                            if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
-                            // Twitter desktop stores location as Polygon; Store first polygon value
-                            if (geo_data.coordinates['0']){
-                                newUGC.latitude     = geo_data.coordinates['0'].latitude;
-                                newUGC.longitude    = geo_data.coordinates['0'].longitude;
-                            }
-
-                            // Store geo data in global array
-                            ugcStorage.map['item' + ugcStorage.map.ugcCounter] = newUGC; // Store obj in global repo
-                            // Store geo data in heatMap array
-                            heatData.push(new google.maps.LatLng(newUGC.latitude, newUGC.longitude));
-
-                            // Create marker with data
-                            opopGlobal.mapManager._createMarker(newUGC);
-                            ugcStorage.map.ugcCounter++;
-                        }
+                    }
                 }
             },
             _createMarker : function(data){
@@ -397,7 +413,7 @@ var opopVisual = (function(){
                     var cMarker = new RichMarker({
                         position: geo,
                         map: googleMap,
-                        content: '<div class="ugc-content-0pop" id="item' + ugcStorage.map.ugcCounter + '"></div>'
+                        content: '<div class="ugc-content-0pop" id="item' + ugcStorage.map.ugcCounter + '" style="background-image:url(' + opopGlobal.defaults.map.pin + ');"></div>'
                     });
 
                 cMarker.setMap(googleMap); // Set RichMarker with UGC
@@ -449,8 +465,10 @@ var opopVisual = (function(){
                 opopGlobal.prepLib._loadCSS('owlCarousel');
             },
             _pullFeed : function(page){
+                console.log('pull feed');
                     opopGlobal.general._xhr(userCarousel, page)
                         .done(function(data) {
+                            console.log('carouselManager', data);
                             var ugcItems = data['_embedded']['ugc:item'];
 
                                 opopGlobal.modal._pinModalEvents(); // Move to dependencies?
@@ -459,62 +477,41 @@ var opopVisual = (function(){
                                 opopGlobal.general._buildWidget(opopVisualWidgets);
                         });
             },
-            _storeUGC : function(data){ // Refactor !!! ?!? waiting for geo enabled in CAPI
+            _storeUGC : function(data){
                 for (var i in data){
-                    // console.log(data[i])
-                    var content         = data[i].content
-                        ,platform_data  = content.platform_data
+                    if (!isNaN(i)){
+                        var content         = data[i].content
+                            ,platform_data  = content.platform_data
 
-                        if (platform_data && content['media'] && content['media']['media_urls']){
-                            var images          = content.media.media_urls
-                                ,network        = content.social_platform;
-
-                            // Store necessary UGC data into geoStore object
-                            var newUGC = {
-                                        author          : content.author.username
-                                        ,avatar         : content.author.profile.avatar
-                                        ,caption        : content.text
-                                        ,large_image    : images.large_image
-                                        ,network        : network
-                                        ,timestamp      : new Date(content.created_on).toDateString()
-                                        ,platform_link  : platform_data.social_platform_original_url
-                                        ,ugcCounter     : ugcStorage.carousel.ugcCounter
+                            if (platform_data && content['media'] && content['media']['media_urls']){
+                                var newUGC = opopGlobal.general._ugcData('carousel', content, platform_data);
                             }
-
-                            // If twitter, store the tweet #
-                            if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
-
-                            // Store geo data in global array
-                            ugcStorage.carousel['item' + ugcStorage.carousel.ugcCounter] = newUGC; // Store obj in global repo
-
-                        }
-                        ugcStorage.carousel.ugcCounter++;
-                }
-
-                var carouselAmt = $0pop('.res-carousel-0pop').length
-                    ,increment  = Math.floor(ugcStorage.carousel.ugcCounter / carouselAmt) // 50
-                    ,start      = 1
-                    ,end        = increment;
-
-                    for (var i = 1; i <= carouselAmt; i++){
-                        for (var j = start; j < end; j++){
-                                currentItem = ugcStorage.carousel['item' + j];
-                            
-                            var template = opopGlobal.general._load_Temp('carousel', currentItem);
-                            
-                                $0pop('#carousel-0pop' + i).append(template);
-                        }
-                        start += increment;
-                        end += increment + 1;
+                            ugcStorage.carousel.ugcCounter++;
                     }
-                    console.log(start);
+                }
 
                 // Create marker with data
                 opopGlobal.carouselManager._buildCarousel();
             },
             _buildCarousel : function(){
                 // console.log(opopCarouselInfo.styles.items);
-                var defaults = opopGlobal.defaults.carousel;
+                var defaults        = opopGlobal.defaults.carousel
+                    ,carouselAmt    = $0pop('.res-carousel-0pop').length
+                    ,increment      = Math.floor(ugcStorage.carousel.ugcCounter / carouselAmt) // 50
+                    ,start          = 1
+                    ,end            = increment;
+
+                    for (var i = 1; i <= carouselAmt; i++){
+                        for (var j = start; j < end; j++){
+                            currentItem     = ugcStorage.carousel['item' + j];
+                            var template    = opopGlobal.general._load_Temp('carousel', currentItem);
+
+                                $0pop('#carousel-0pop' + i).append(template);
+                        }
+                        start   += increment;
+                        end     += increment + 1;
+                    }
+                    console.log(start);
 
                     $0popCarousel.owlCarousel({
                         items               : defaults.items,
@@ -546,6 +543,8 @@ var opopVisual = (function(){
                 $0pop('#' + gridSelector).append('<div class="' + gutterSizer + '"></div>');
             },
             _pullFeed : function(page){
+                    nextGridItem = opopGlobal.defaults.grid.area + 1
+
                     opopGlobal.general._xhr(userGrid, page)
                         .done(function(data) {
                             var ugcItems = data['_embedded']['ugc:item'];
@@ -559,44 +558,27 @@ var opopVisual = (function(){
             _storeUGC : function(data){ // Can consolidate this function with other _storeUGC functions. Will do later
                     for (var i in data){
                         // console.log(data[i])
-                        var content         = data[i].content
-                            ,platform_data  = content.platform_data
+                        if (!isNaN(i)){
+                            var content         = data[i].content
+                                ,platform_data  = content.platform_data
 
-                            if (platform_data && content['media'] && content['media']['media_urls']){
-                                var images          = content.media.media_urls
-                                    ,network        = content.social_platform;
+                                if (platform_data && content['media'] && content['media']['media_urls']){
+                                    var newUGC      = opopGlobal.general._ugcData('grid', content, platform_data);
+                                        currentItem = ugcStorage.grid['item' + ugcStorage.grid.ugcCounter];
 
-                                // Store necessary UGC data into geoStore object
-                                var newUGC = {
-                                            author          : content.author.username
-                                            ,avatar         : content.author.profile.avatar
-                                            ,caption        : content.text
-                                            ,large_image    : images.large_image
-                                            ,network        : network
-                                            ,timestamp      : new Date(content.created_on).toDateString()
-                                            ,platform_link  : platform_data.social_platform_original_url
-                                            ,ugcCounter     : ugcStorage.grid.ugcCounter
-                                }
-
-                                // If twitter, store the tweet #
-                                if (network === 'twitter') newUGC.platform_ref = content.platform_ref;
-
-                                // Store geo data in global array
-                                ugcStorage.grid['item' + ugcStorage.grid.ugcCounter] = newUGC; // Store obj in global repo
-
-                                currentItem = ugcStorage.grid['item' + ugcStorage.grid.ugcCounter];
-
-                                var area = opopGlobal.defaults.grid.rows * opopGlobal.defaults.grid.columns;
-                                    if (ugcStorage.grid.ugcCounter <= area){
+                                    if (ugcStorage.grid.ugcCounter <= opopGlobal.defaults.grid.area){
                                         var template = opopGlobal.general._load_Temp('grid', currentItem);
                                             $0pop(template).appendTo($0popGrid);
-                                    } else if (ugcStorage.grid.ugcCounter === area + 1){
-                                            opopGlobal.gridManager._buildGrid();
                                     }
+                                    // else if (ugcStorage.grid.ugcCounter === opopGlobal.defaults.grid.area + 1){
+                                    //         opopGlobal.gridManager._buildGrid(); // move this
+                                    // }
 
-                        }
+                            }
                         ugcStorage.grid.ugcCounter++
+                        }
                     }
+                    opopGlobal.gridManager._buildGrid(); // move this
             },
             _buildGrid : function(){
                     var getGutterPx         = $0pop('.' + gutterSizer).width()
@@ -620,11 +602,41 @@ var opopVisual = (function(){
                          msnry.layout();
                     });
 
+                    setInterval(opopGlobal.defaults.grid.transition, opopGlobal.defaults.grid.speed);
             }
         };
 
-        opopGlobal.defaults = { // Will add carousel defaults here later
+        opopGlobal.gridManager.addons = {
+                random : function(){
+                    console.log(nextGridItem, ugcStorage.grid.ugcCounter)
+                    var randomSpot      = selectRandom(opopGlobal.defaults.grid.area)
+                        ,randomElement  = $0pop('.grid-item-0pop')[randomSpot]
+
+                    nextGridItem   = (nextGridItem >= ugcStorage.grid.ugcCounter) ? 1 : nextGridItem;
+
+                        function selectRandom(rowCol){
+                            return Math.floor(Math.random() * rowCol) // If accessing .grid-item-0pop then dont need +1
+                        }
+
+                    $0pop(randomElement).find('img')
+                            .fadeOut()
+                            .attr('src', ugcStorage.grid['item' + nextGridItem].medium_image)
+                            .fadeIn();
+
+                    $0pop(randomElement).attr('id', 'item' + nextGridItem);
+
+                    nextGridItem++ // item# > ugcStorage.grid.ugcCounter ? nextGridItem = 1
+                },
+                all : function(){ // Swap all images on interval
+                    $0pop('.grid-item-0pop img').attr('src', ugcStorage.grid['item' + nextGridItem].medium_image);
+
+                    nextGridItem++
+                }
+        };
+
+        opopGlobal.defaults = {
             map : {
+                pin         : userMap.pin       || filesDir + 'images/opop_map_pin.png',
                 zoom        : userMap.zoom      || 13,
                 center : {
                     lat     : userMap.lat       || 40.7508095,
@@ -654,13 +666,16 @@ var opopVisual = (function(){
                 itemsMobile         : [479, ( userCarousel.itemsMobile      || 1 )],
                 lazyLoad            : userCarousel.lazy                     || true,
                 navigation          : userCarousel.navigation               || true,
-                autoPlay            : userCarousel.autoPlay                 || true,
+                autoPlay            : userCarousel.autoPlay                 || 4000,
                 rewindNav           : userCarousel.rewindNav                || true,
                 responsive          : userCarousel.responsive               || true,
             },
             grid : {
                 rows                : userGrid.rows     || 3,
-                columns             : userGrid.columns  || 5
+                columns             : userGrid.columns  || 5,
+                area                : (userGrid.rows * userGrid.columns) || 15,
+                transition          : userGrid.transition || opopGlobal.gridManager.addons.random,
+                speed               : userGrid.speed || 3000,
             }
 
         };
@@ -668,7 +683,7 @@ var opopVisual = (function(){
         opopGlobal.general._loadDependencies(); // Load dependencies jQuery and _; then build widgets
 
         return {
-                configureMap    : opopGlobal.mapManager.configureMap
+                configureMap    : opopGlobal.mapManager.configureMap,
                 // configureMap is returned to global scope so gmaps callback will fire
         }
 
