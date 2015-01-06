@@ -1,19 +1,59 @@
 <!DOCTYPE html>
 <html>
+<!--
+map:
+creep feature
+truncate/randomize/prevent map from going too close
 
+grid options:
+fade, css3 animations
+offerpop bg logo, transform
+
+transitions:
+row
+column
+all
+
+-->
 <head>
     <title></title>
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <!-- <link rel="stylesheet" type="text/css" href="css/styles.css"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+    #carousel-border-0pop{
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        z-index: 999;
+    }
+    #map-canvas-0pop2{
+        height:400px;
+    }
+/*    #carousel-0pop2{
+        width:50%;
+    }*/
+
+    /*#grid-0pop2 .gutter-sizer-0pop{
+        width:5%;
+    }*/
+    #grid-0pop2{
+        width: 100%;
+    }
+    </style>
 </head>
 
 <body>
+
     <div id="map-canvas-0pop"></div>
+    <!-- <div id="map-canvas-0pop2"></div> -->
     <div id="carousel-0pop1" class="res-carousel-0pop"></div>
+    <div id="carousel-0pop2" class="res-carousel-0pop"></div>
+    <div id="carousel-0pop3" class="res-carousel-0pop"></div>
     <!-- <div id="carousel-0pop2" class="res-carousel-0pop"></div> -->
     <!-- <div id="carousel-0pop3" class="res-carousel-0pop"></div> -->
     <!-- <div id="carousel-0pop4" class="res-carousel-0pop"></div> -->
     <div id="grid-0pop"></div>
+    <div id="grid-0pop2"></div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.0/underscore-min.js"></script> -->
@@ -23,39 +63,110 @@
         console.log('_.=', _.VERSION)
     }
     </script> -->
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.offerpop.com/Assets/Packers/map/script/mapBox.js"></script>
+    <!-- <script type="text/javascript">
+    opopVisual = {
+        hooks : {
+            afterModalLoad : function(){
+                console.log($('#modal-0pop').find('img').hide());
+            }
+        }
+    }
+    </script> -->
 
     <script type="text/javascript">
         widgets0pop = {};
-        widgets0pop.opopMapInfo = {
-            type: 'mapManager',
-            campaignId: 6900,
-            access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
-            // zoom: 2,
-            // lat: 9.6924434,
-            // long: 13.0120809
-            // heat: true
-            // pin : 'https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/images/Boohoo_pin.png'
-        };
+        // widgets0pop.opopMapInfo = {
+        //     type: 'map',
+        //     selector: '#map-canvas-0pop',
+        //     // campaignId: 6900,
+        //     // access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
+        //     campaignId: 7464,
+        //     access_token: 'SBfVS2fsEVCoqUlYhMlbqpb6DYQel0',
+        //     features: 'thumb',
+        //     media_type : 'image,text',
+        //     zoom: 2,
+        //     center: {
+        //         custom: true,
+        //         lat: 40.641266,
+        //         long: 1.6989276,
+        //     },
+        //     // pin: 'https://s3.amazonaws.com/assets.offerpop.com/Assets/Boohoo/images/Boohoo_pin.png',
+        //     styles: opopMapStyles
+        // };
 
-        widgets0pop.opopCarouselInfo = {
-            type: 'carouselManager',
-            campaignId: 7464,
-            access_token: 'SBfVS2fsEVCoqUlYhMlbqpb6DYQel0',
+        // widgets0pop.opopMapInfo2 = {
+        //     type: 'map',
+        //     selector: '#map-canvas-0pop2',
+        //     // features: 'pin',
+        //     campaignId: 7768,
+        //     access_token: '5kByaonOSsBhLtJQttYgsZp9MpBFJV',
+        // };
+
+        // widgets0pop.widget1 = {
+        //     type: 'carousel',
+        //     selector: '#carousel-0pop1',
+        //     campaignId: 7768,
+        //     access_token: '5kByaonOSsBhLtJQttYgsZp9MpBFJV',
+        //     items : 3,
+        //     itemsDesktop: 3,
+        //     itemsDesktopSmall: 3,
+        //     autoPlay: false,
+        // }
+
+        widgets0pop.widget2 = {
+            type: 'carousel',
+            selector: '#carousel-0pop2',
+            // campaignId: 6900,
+            // access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
+            campaignId: 7922,
+            access_token : 'JlVUHmFvh2bCYVn76UplAXcIt33xFY',
+            media_type: 'text'
+        }
+
+
+        widgets0pop.widget3 = {
+            type: 'carousel',
+            selector: '#carousel-0pop3',
+            campaignId: 7928,
+            access_token: 'Axai6kNqJdi2rXt2YpBegBX5ZOFcIL',
         }
 
         widgets0pop.opopGridInfo = {
-            type: 'gridManager',
+            type: 'grid',
+            selector: '#grid-0pop',
             campaignId: 6900,
             access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
-            rows: 4,
-            columns: 5,
+            // campaignId: 7903,
+            // access_token: 'yQfjcUDOuByzHTK68BWXltpWB16jWQ',
+            // media_type: 'image,text',
+            rows: 2,
+            columns: 6,
+            // speed: 1000,
+            order: 'random_sort',
+            transition: false,
+        }
+
+        widgets0pop.opopGridInfo2 = {
+            type: 'grid',
+            selector: '#grid-0pop2',
+            // campaignId: 7768,
+            // access_token: '5kByaonOSsBhLtJQttYgsZp9MpBFJV',
+            // campaignId: 7903,
+            // access_token: 'yQfjcUDOuByzHTK68BWXltpWB16jWQ',
+            // media_type: 'image,text',
+            campaignId: 7464,
+            access_token: 'SBfVS2fsEVCoqUlYhMlbqpb6DYQel0',
+            media_type: 'text,image',
+            // rows: 3,
+            // columns: 5,
             order: 'random_sort'
         }
 
-    var e = document.createElement('script');
-    e.src = 'https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/js/visualizationSdk.js';
-    e.async = true;
-    document.body.appendChild(e);
+    var v = document.createElement('script');
+    v.src = 'https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk_v2/js/visualizationSdk.js';
+    v.async = true;
+    document.body.appendChild(v);
     </script>
 </body>
 

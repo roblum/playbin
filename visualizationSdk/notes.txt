@@ -1,0 +1,56 @@
+Test data:
+
+Boohoo Campaign: offerpop.com whitelist
+campaignId: 6900,
+access_token: '1dDCBwoeNf1QgZkYaZSwSvjik7lDKV',
+
+Brooklyn Campaign: amazons3 whitelist
+campaignId: 7464,
+access_token: 'SBfVS2fsEVCoqUlYhMlbqpb6DYQel0',
+
+Brooklyn Roberts Page: offerpop.com whitelist
+campaignID: 7865
+access_token: 'sPFYeqjKsyybcmuxAGaMxMxgv5AGxF'
+
+Visualizations Examples:
+https://s3.amazonaws.com/assets.offerpop.com/add_ons/visualizationSdk/index.html
+https://offerpop.com/hashtag/gallery/7865
+http://offerpop.com/hashtag/gallery/102
+https://www.facebook.com/pages/Wood-Staging/705158179515288?v=app_376734382425564&rest=1
+
+
+Ideas:
+tweets for thumb map? // Do not exist...
+fix heat map: clear heatMap array and display heat in progression
+map tug of war
+multiple heat layers on one map
+different speed carousels
+pagination modal
+tilted polaroids
+hover + display zoomed picture
+localstorage
+
+
+Updated snippet below:
+
+Add this to the <head> tag:
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+Add this to the <body>, wherever they want the carousel:
+<div id="carousel-0pop1" class="res-carousel-0pop"></div>
+
+Add this to the end of the <body> tag:
+<script type="text/javascript">
+        widgets0pop = {};
+        widgets0pop.opopCarouselInfo = {
+            type: 'carouselManager',
+            campaignId: 7768,
+            access_token: 'nj1MzUm9DwOP4lnDRiFmlesLVDY9sW'
+
+        }
+
+    var v = document.createElement('script');
+    v.src = 'https://s3.amazonaws.com/assets.offerpop.com/add_ons/beta/visualizationSdk/js/visualizationSdk.min.js';
+    v.async = true;
+    document.body.appendChild(v);
+</script>

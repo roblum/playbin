@@ -1,4 +1,45 @@
 <div class="item">
-     <div class="lazyOwl" data-src="<%= medium_image %>" id="item<%= ugcCounter %>"></div>
-     <a href="http://<%= network %>.com/" class="social-slider-0pop <%= network %>-0pop" target="_blank"></a>
+     <% if (opopVisual.currentItem.medium_image){ %>
+          <div class="lazyOwl" data-src="<%= medium_image %>" id="item<%= ugcCounter %>"></div>
+          <a href="http://<%= network %>.com/" class="social-slider-0pop <%= network %>-0pop" target="_blank"></a>
+     <% } else { %>
+          <div class="caption-content-0pop lazyOwl" id="item<%= ugcCounter %>">
+               <div class="caption-header-0pop">
+                    <img class="avatar-0pop" src="<%= avatar %>">
+                    <div class="caption-user-0pop">
+                         <a href="http://<%= network %>.com/<%= author %>" target="_blank">
+                              <strong><%= author %></strong>
+                         </a>
+                    </div>
+
+                    <% if (opopVisual.currentItem.platform_ref){ %>
+                         <div class="pull-right-0pop">
+                              <a class="twitter-follow-0pop" target="_blank" href="https://twitter.com/intent/follow?region=follow_link&amp;screen_name=<%= author %>&amp;tw_p=followbutton&amp;variant=2.0">
+                                   <i class="icon"></i><span>Follow</span>
+                              </a>
+                         </div>
+                    <% } %>
+               </div>
+
+               <div class="caption-body-0pop">
+                    <%= caption %>
+               </div>
+
+               <div class="modal-timestamp-0pop">
+                    <div class="timestamp-0pop">
+                         <a class="date-time-0pop" href="<%= platform_link %>" target="_blank">
+                             <%= timestamp %> on <span><%= network %></span>
+                         </a>
+                    </div>
+               </div>
+
+               <% if (opopVisual.currentItem.platform_ref){%>
+                    <div class="pull-right-0pop">
+                        <a class="tweet-action-0pop tweet-reply-0pop" href="https://twitter.com/intent/tweet?in_reply_to=<%= platform_ref %>" target="_blank"></a>
+                        <a class="tweet-action-0pop tweet-retweet-0pop" href="https://twitter.com/intent/retweet?tweet_id=<%= platform_ref %>" target="_blank"></a>
+                        <a class="tweet-action-0pop tweet-favorite-0pop" href="https://twitter.com/intent/favorite?tweet_id=<%=platform_ref %>" target="_blank"></a>
+                    </div>
+               <% } %>
+          </div>
+     <% } %>
 </div>

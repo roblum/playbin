@@ -1,58 +1,85 @@
 <div class="modal-close-0pop stretch-close-0pop"></div>
-<div id="modal-0pop">
+
+<div id="modal-0pop" data-item="<%= ugcCounter %>" data-widget="<%= widgetType %>" data-index="<%= index %>" class="click-unit-<%= clickEnabled %>">
 
     <div class="modal-header-0pop">
-        <div class="modal-close-0pop"></div>
+            <div class="modal-close-0pop"></div>
     </div>
 
-    <div class="modal-body-0pop">
-            <div class="details-wrapper-0pop">
-                <div class="details-media-0pop">
-                    <img src="<%= large_image %>">
-                    <a class="social-slider-0pop <%= network %>-0pop" href="http://<%= network %>.com/" target="_blank"></a>
-                </div>
+    <div class="modal-content-0pop main-0pop">
+        <div class="modal-pagination-0pop">
+            <div class="modal-prev-0pop"></div>
+            <div class="modal-next-0pop"></div>
+        </div>
+
+        <% if (opopVisual.currentItem.large_image){ %>
+            <div class="modal-body-0pop">
+                    <div class="details-wrapper-0pop">
+                        <div class="details-media-0pop">
+                            <img src="<%= large_image %>">
+                            <a class="social-slider-0pop <%= network %>-0pop" href="http://<%= network %>.com/" target="_blank"></a>
+                        </div>
+                    </div>
             </div>
-    </div>
+        <% } %>
 
-    <div class="modal-footer-0pop">
-            <div class="caption-content-0pop">
-                <div class="caption-header-0pop">
-                    <img class="avatar-0pop" src="<%= avatar %>">
-                    <div class="caption-user-0pop">
-                        <a href="http://<%= network %>.com/<%= author %>" target="_blank">
-                            <strong><%= author %></strong>
+        <div class="modal-footer-0pop">
+                <div class="caption-content-0pop">
+                    <div class="caption-header-0pop">
+                        <img class="avatar-0pop" src="<%= avatar %>">
+                        <div class="caption-user-0pop">
+                            <a href="http://<%= network %>.com/<%= author %>" target="_blank">
+                                <strong><%= author %></strong>
+                            </a>
+                        </div>
+
+                        <% if (opopVisual.currentItem.platform_ref){%>
+                            <div class="pull-right-0pop">
+                                <a class="twitter-follow-0pop" target="_blank" href="https://twitter.com/intent/follow?region=follow_link&amp;screen_name=<%= author %>&amp;tw_p=followbutton&amp;variant=2.0">
+                                    <i class="icon"></i><span>Follow</span>
+                                </a>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <div class="caption-body-0pop">
+                        <%= caption %>
+                    </div>
+                </div>
+
+                <div class="modal-timestamp-0pop">
+                    <div class="timestamp-0pop">
+                        <a class="date-time-0pop" href="<%= platform_link %>" target="_blank">
+                            <%= timestamp %> on <span><%= network %></span>
                         </a>
                     </div>
 
-                    <% if (currentItem.platform_ref){%>
+                    <% if (opopVisual.currentItem.platform_ref){%>
                         <div class="pull-right-0pop">
-                            <a class="twitter-follow-0pop" target="_blank" href="https://twitter.com/intent/follow?region=follow_link&amp;screen_name=<%= author %>&amp;tw_p=followbutton&amp;variant=2.0">
-                                <i class="icon"></i><span>Follow</span>
-                            </a>
+                            <a class="tweet-action-0pop tweet-reply-0pop" href="https://twitter.com/intent/tweet?in_reply_to=<%= opopVisual.currentItem.platform_ref %>" target="_blank"></a>
+                            <a class="tweet-action-0pop tweet-retweet-0pop" href="https://twitter.com/intent/retweet?tweet_id=<%= opopVisual.currentItem.platform_ref %>" target="_blank"></a>
+                            <a class="tweet-action-0pop tweet-favorite-0pop" href="https://twitter.com/intent/favorite?tweet_id=<%= opopVisual.currentItem.platform_ref %>" target="_blank"></a>
                         </div>
                     <% } %>
                 </div>
+        </div>
 
-                <div class="caption-body-0pop">
-                    <%= caption %>
-                </div>
-            </div>
-
-            <div class="modal-timestamp-0pop">
-                <div class="timestamp-0pop">
-                    <a class="date-time-0pop" href="<%= platform_link %>" target="_blank">
-                        <%= timestamp %> on <span><%= network %></span>
-                    </a>
-                </div>
-
-                <% if (currentItem.platform_ref){%>
-                    <div class="pull-right-0pop">
-                        <a class="tweet-action-0pop tweet-reply-0pop" href="https://twitter.com/intent/tweet?in_reply_to=<%= currentItem.platform_ref %>"></a>
-                        <a class="tweet-action-0pop tweet-retweet-0pop" href="https://twitter.com/intent/retweet?tweet_id=<%= currentItem.platform_ref %>"></a>
-                        <a class="tweet-action-0pop tweet-favorite-0pop" href="https://twitter.com/intent/favorite?tweet_id=<%= currentItem.platform_ref %>"></a>
-                    </div>
-                <% } %>
-            </div>
     </div>
+
+    <% if (opopVisual.currentItem['click_units']){ %>
+        <div class="modal-clickunits-0pop">
+            <div class="clickunits-title-0pop">Shop Now</div>
+                <% _.each(opopVisual.currentItem['click_units'], function(clickunit) { %>
+                    <div class="click-unit-0pop">
+                        <a href="<%= clickunit.click_through_url %>" class="clickunit-link-0pop" target="_blank">
+                            <img class="clickunit-image-0pop" src="<%= clickunit.image_url %>" alt=""/>
+                            <ul class="clickunit-info-0pop">
+                                <li class="clickunit-name-0pop"><%= clickunit.name %></li>
+                            </ul>
+                        </a>
+                    </div>
+                <% }); %>
+        </div>
+    <% } %>
 
 </div>
